@@ -175,7 +175,19 @@
     <div style="font-size: 12px; color: #58a6ff; font-weight: bold; margin-bottom: 5px;">⚽⚽⚽ ดาวซัลโว (Golden Boot)🥇🥇🥇</div>
     <input type="text" id="top-scorer-guess" placeholder="พิมพ์ชื่อนักเตะ..." style="width: 90%; padding: 5px; border-radius: 4px; background: #0d1117; border: 1px solid #30363d; color: white; text-align: center;">
 </div>
-
+<div id="score-container">
+    <h3>ตารางคะแนนผู้เล่น</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>คะแนน</th>
+            </tr>
+        </thead>
+        <tbody id="scoreBody">
+            </tbody>
+    </table>
+</div>
 <script>
     const DB_URL = "https://qbqjogfflfnsldjkpiog.supabase.co";
     const DB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU";
@@ -371,5 +383,23 @@ function buildEmptyColumns(containerId, count, stagePrefix) {
     }
 }
 </script>
+<script>
+    async function loadScores() {
+        const { data, error } = await supabase
+            .from('users')
+            .select('username, total_points')
+            .order('total_points', { ascending: false });
+
+        if (error) { console.error(error); return; }
+
+        const tbody = document.getElementById('scoreBody');
+        tbody.innerHTML = '';
+        data.forEach(u => {
+            tbody.innerHTML += `<tr><td>${u.username}</td><td>${u.total_points}</td></tr>`;
+        });
+    }
+    loadScores();
+</script>
+
 </body>
 </html>
