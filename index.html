@@ -10,6 +10,8 @@
         .match { background: #21262d; padding: 15px; border-radius: 8px; width: 140px; border: 1px solid #30363d; }
         table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: collapse; background: #161b22; }
         th, td { border: 1px solid #30363d; padding: 10px; }
+        input { padding: 10px; margin: 5px; }
+        button { padding: 10px 20px; cursor: pointer; background: #238636; color: white; border: none; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -18,63 +20,52 @@
 
     <div id="loginArea">
         <input type="text" id="username" placeholder="Username">
-        <button id="loginBtn">เข้าสู่ระบบ</button>
+        <input type="text" id="fullName" placeholder="ชื่อ-นามสกุล">
+        <button id="loginBtn">เข้าสู่ระบบ & เริ่มทายผล</button>
     </div>
 
-    <div id="bracketArea" class="bracket" style="display:none;">
+    <div id="bracketArea" class="bracket">
         <div class="match">คู่ที่ 1<br>ทีม A vs ทีม B</div>
         <div class="match">คู่ที่ 2<br>ทีม C vs ทีม D</div>
     </div>
 
-    <table id="leaderboard">
+    <table>
         <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
-        <tbody id="leaderboardBody"><tr><td colspan="3">กำลังโหลด...</td></tr></tbody>
+        <tbody id="leaderboardBody"><tr><td colspan="3">กำลังโหลดข้อมูล...</td></tr></tbody>
     </table>
 
 <script>
-    // 1. ตั้งค่า Supabase (ใส่ URL และ Key ของคุณให้ถูกต้อง)
-    const supabaseUrl = 'https://qbqjogfflfnsldjkpiog.supabase.co'; 
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU';
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    // ตั้งค่า Supabase (ใช้ URL และ KEY ของคุณ)
+    const supabase = supabase.createClient('https://qbqjogfflfnsldjkpiog.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU');
 
-    // 2. ใช้ Event Listener แทนการเรียก onclick เพื่อป้องกัน Error
+    // จัดการ Login
     document.getElementById('loginBtn').addEventListener('click', async () => {
-        const user = document.getElementById('username').value.trim();
-        if(!user) return alert('กรุณากรอก Username');
+        const username = document.getElementById('username').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
         
-        try {
-            const { data, error } = await supabaseClient
-                .from('users')
-                .select('*')
-                .eq('username', user)
-                .single();
-            
-            if (error) throw error;
-            
-            // ถ้า login สำเร็จ
-            document.getElementById('loginArea').style.display = 'none';
-            document.getElementById('bracketArea').style.display = 'flex';
-            alert('ยินดีต้อนรับ ' + user);
-        } catch (e) {
-            alert('ไม่พบผู้ใช้งานหรือเกิดข้อผิดพลาด: ' + e.message);
+        if(!username) return alert('กรุณากรอก Username');
+
+        const { data, error } = await supabase.from('users')
+            .upsert({ username: username, full_name: fullName, total_points: 0 })
+            .select();
+
+        if(error) {
+            alert('เกิดข้อผิดพลาด: ' + error.message);
+        } else {
+            alert('ล็อกอินสำเร็จ!');
         }
     });
 
-    // 3. ฟังก์ชันดึงตารางคะแนน
+    // โหลด Leaderboard
     async function loadLeaderboard() {
-        const { data, error } = await supabaseClient
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false });
-            
-        if (data) {
+        const { data } = await supabase.from('users').select('username, total_points').order('total_points', { ascending: false });
+        if(data) {
             document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => 
                 `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`
             ).join('');
         }
     }
     
-    // เรียกโหลดตารางเมื่อหน้าเว็บโหลดเสร็จ
     loadLeaderboard();
 </script>
 </body>
