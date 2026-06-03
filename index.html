@@ -5,81 +5,66 @@
     <title>Miracle55 - FIFA Worldcup 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 20px; }
-        /* สไตล์ผังทายผล */
-        .bracket-wrapper { display: flex; justify-content: center; gap: 20px; padding: 20px; overflow-x: auto; }
-        .match-block { background: #161b22; border: 1px solid #30363d; padding: 10px; border-radius: 8px; width: 160px; text-align: center; margin-bottom: 10px; }
-        /* สไตล์ตาราง Leaderboard */
-        .leaderboard-section { max-width: 600px; margin: 40px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; border: 1px solid #30363d; text-align: center; }
+        body { font-family: sans-serif; background-color: #0d1117; color: #fff; padding: 20px; text-align: center; }
+        .bracket { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
+        .match { background: #21262d; padding: 15px; border-radius: 8px; width: 140px; border: 1px solid #30363d; }
+        table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: collapse; background: #161b22; }
+        th, td { border: 1px solid #30363d; padding: 10px; }
     </style>
 </head>
 <body>
 
-<div style="text-align: center;"><h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1></div>
+    <h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1>
 
-<div id="loginSection" style="max-width: 400px; margin: 20px auto; background: #161b22; padding: 20px; border-radius: 10px;">
-    <input type="text" id="username" placeholder="Username" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-    <button id="loginBtn" style="width: 100%; padding: 10px; background: #1f6feb; color: white; border: none;">เข้าสู่ระบบ</button>
-</div>
-
-<div class="bracket-wrapper" id="bracketSection" style="display: none;">
-    <div id="left-side">
-        <div class="match-block">คู่ที่ 1<br>ทีม A vs ทีม B</div>
-        <div class="match-block">คู่ที่ 2<br>ทีม C vs ทีม D</div>
+    <div id="loginArea">
+        <input type="text" id="username" placeholder="Username">
+        <button onclick="handleLogin()">เข้าสู่ระบบ</button>
     </div>
-    <div id="right-side">
-        <div class="match-block">คู่ที่ 3<br>ทีม E vs ทีม F</div>
-        <div class="match-block">คู่ที่ 4<br>ทีม G vs ทีม H</div>
-    </div>
-</div>
 
-<div class="leaderboard-section">
-    <h3>🏆 ตารางคะแนน Leaderboard</h3>
-    <table>
+    <div id="bracketArea" class="bracket" style="display:none;">
+        <div class="match">คู่ที่ 1<br>ทีม A vs ทีม B</div>
+        <div class="match">คู่ที่ 2<br>ทีม C vs ทีม D</div>
+    </div>
+
+    <table id="leaderboard">
         <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
-        <tbody id="leaderboardBody"><tr><td colspan="3">รอโหลดข้อมูล...</td></tr></tbody>
+        <tbody id="leaderboardBody"><tr><td colspan="3">กำลังโหลด...</td></tr></tbody>
     </table>
-</div>
 
 <script>
-    const supabaseClient = supabase.createClient("https://qbqjogfflfnsldjkpiog.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU");
+    // 1. กำหนดตัวแปร supabase ให้ถูกต้อง
+    const supabaseUrl = 'https://qbqjogfflfnsldjkpiog.supabase.co'; 
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // ใช้ addEventListener แทน onclick เพื่อป้องกัน ReferenceError
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-        const username = document.getElementById('username').value.trim();
-        if (!username) return alert('กรุณากรอก Username');
+    // 2. ฟังก์ชัน Login ที่ดัก Error ไว้
+    async function handleLogin() {
+        const user = document.getElementById('username').value;
+        if(!user) return alert('กรุณากรอก Username');
         
-        const { data, error } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('username', username)
-            .maybeSingle();
-
-        if (data) {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('bracketSection').style.display = 'flex';
-            alert('ยินดีต้อนรับ ' + data.username);
-        } else {
-            alert('ไม่พบชื่อผู้ใช้นี้');
+        try {
+            const { data, error } = await supabase.from('users').select('*').eq('username', user).single();
+            if (error) throw error;
+            
+            document.getElementById('loginArea').style.display = 'none';
+            document.getElementById('bracketArea').style.display = 'flex';
+            alert('ยินดีต้อนรับ ' + user);
+        } catch (e) {
+            alert('ไม่พบผู้ใช้งานหรือเกิดข้อผิดพลาด: ' + e.message);
         }
-    });
+    }
 
+    // 3. ฟังก์ชันดึงตารางคะแนน
     async function loadLeaderboard() {
-        const { data } = await supabaseClient
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false })
-            .limit(20);
-        
+        const { data, error } = await supabase.from('users').select('username, total_points').order('total_points', { ascending: false });
         if (data) {
             document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => 
                 `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`
             ).join('');
         }
     }
-
+    
+    // เรียกให้ทำงานทันทีที่โหลดหน้าเว็บ
     loadLeaderboard();
 </script>
 </body>
