@@ -7,53 +7,58 @@
     <script src="supabase-config.js"></script>
     <style>
         body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; text-align: center; padding: 20px; }
-        .login-card { max-width: 450px; margin: 20px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
-        input { width: 90%; padding: 10px; margin-bottom: 10px; }
-        .btn { padding: 10px 20px; background: #1f6feb; color: white; border: none; cursor: pointer; }
-        #bracketSection, #score-container { display: none; }
+        .match-block { background: linear-gradient(145deg, #1e252e, #161b22); border: 1px solid #30363d; border-radius: 8px; padding: 12px; width: 250px; margin: 20px auto; }
+        table { width: 90%; max-width: 600px; margin: 20px auto; border-collapse: collapse; border: 1px solid #30363d; }
+        th, td { padding: 12px; border: 1px solid #30363d; }
+        .rank-1 { background-color: #ffd700; color: #000; font-weight: bold; }
+        .rank-2 { background-color: #c0c0c0; color: #000; }
+        .rank-3 { background-color: #cd7f32; color: #fff; }
     </style>
 </head>
 <body>
+
     <h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1>
 
-    <div id="loginSection" class="login-card">
-        <input type="text" id="username" placeholder="Username">
-        <button class="btn" onclick="login()">เข้าสู่ระบบ</button>
+    <div class="match-block">
+        <p>คู่เปิดสนาม</p>
+        <div style="display:flex; justify-content:space-between;">
+            <span>ทีม A</span> <span>VS</span> <span>ทีม B</span>
+        </div>
     </div>
 
-    <div id="bracketSection">
-        <h3>คู่เปิดสนาม</h3>
-        <p>ทีม A vs ทีม B</p>
-    </div>
-
-    <div id="score-container">
-        <h3>ตารางคะแนน (Top 20)</h3>
-        <table border="1" style="width:90%; margin:auto; border-collapse:collapse;">
-            <tbody id="scoreBody"></tbody>
-        </table>
-    </div>
+    <h3>ตารางคะแนนผู้เล่น (Top 20)</h3>
+    <table>
+        <thead>
+            <tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr>
+        </thead>
+        <tbody id="scoreBody"></tbody>
+    </table>
 
     <script>
-        // แก้ไขให้เรียก window.supabaseClient ให้ชัดเจน
-        async function login() {
-            const username = document.getElementById('username').value;
-            const { data, error } = await window.supabaseClient.from('users').select('*').eq('username', username).single();
-            if(data) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('bracketSection').style.display = 'block';
-                document.getElementById('score-container').style.display = 'block';
-                loadScores();
-            } else {
-                alert('ไม่พบข้อมูล: ' + (error ? error.message : 'กรุณาเช็ค Policy ใน Supabase'));
+        // โหลดข้อมูลคะแนน
+        async function loadScores() {
+            try {
+                // ใช้ window.supabaseClient ตามที่เราตกลงกันไว้
+                const { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('username, total_points')
+                    .order('total_points', { ascending: false })
+                    .limit(20);
+                
+                if (data) {
+                    const tbody = document.getElementById('scoreBody');
+                    tbody.innerHTML = data.map((u, i) => {
+                        let rowClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+                        return `<tr class="${rowClass}"><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error("Error loading scores:", err);
             }
         }
         
-        async function loadScores() {
-            const { data } = await window.supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false });
-            if(data) {
-                document.getElementById('scoreBody').innerHTML = data.map(u => `<tr><td>${u.username}</td><td>${u.total_points}</td></tr>`).join('');
-            }
-        }
+        // เรียกใช้ฟังก์ชันทันทีที่โหลดหน้าเว็บ
+        loadScores();
     </script>
 </body>
 </html>
