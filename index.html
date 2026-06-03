@@ -2,90 +2,36 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Miracle55 - FIFA Worldcup 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <style>
-        /* CSS ของเดิมที่เพื่อนมีอยู่แล้ว ใช้ได้เลยครับ */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; }
-        .header-zone { text-align: center; margin-bottom: 20px; }
-        h1 { color: #58a6ff; }
-        .login-card { max-width: 450px; margin: 0 auto 20px auto; background: #161b22; padding: 20px; border-radius: 10px; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; margin-bottom: 15px; box-sizing: border-box; }
-        .bracket-wrapper { display: flex; justify-content: space-between; overflow-x: auto; padding: 20px 0; }
-        .match-block { background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; margin-bottom: 10px; }
-        .team-row { display: flex; justify-content: space-between; align-items: center; background-color: #21262d; padding: 6px 10px; border-radius: 4px; font-size: 13px; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; text-align: center; padding: 20px; }
+        .bracket-box { background: #161b22; border: 1px solid #30363d; padding: 20px; margin: 20px auto; max-width: 400px; border-radius: 10px; }
+        table { width: 90%; max-width: 600px; margin: 20px auto; border-collapse: collapse; border: 1px solid #30363d; }
+        td, th { padding: 10px; border: 1px solid #30363d; }
     </style>
 </head>
 <body>
-
-<div class="header-zone">
-    <h1>🏆⚽Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
-</div>
-
-<div id="loginSection" class="login-card">
-    <h3>👤 กรอกข้อมูลผู้เล่น</h3>
-    <input type="text" id="username" placeholder="ชื่อ Username">
-    <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง">
-    <button style="width:100%; padding:12px; background:#1f6feb; border:none; color:white; border-radius:6px; cursor:pointer;" onclick="checkAndLoginUser()">เข้าสู่ระบบ</button>
-</div>
-
-<div id="bracketSection" class="bracket-wrapper" style="display: none;">
+    <h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1>
+    <div class="bracket-box">
+        <h3>คู่เปิดสนาม</h3>
+        <p>ทีม A VS ทีม B</p>
     </div>
-
-<div id="score-container" style="max-width: 600px; margin: 20px auto;">
-    <h3>ตารางคะแนนผู้เล่น (Top 10)</h3>
-    <table border="1" style="width:100%; border-collapse: collapse;">
-        <thead>
-            <tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr>
-        </thead>
+    <h3>ตารางคะแนนผู้เล่น (Top 20)</h3>
+    <table id="scoreTable">
+        <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
         <tbody id="scoreBody"></tbody>
     </table>
-</div>
 
-<script>
-    // 1. ฟังก์ชันล็อกอิน
-    async function checkAndLoginUser() {
-        const username = document.getElementById('username').value.trim();
-        const fullName = document.getElementById('fullName').value.trim();
-        if(!username) return alert('กรอก Username ด้วยครับ');
-
-        let { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).single();
-        if (error && error.code === 'PGRST116') {
-            const { data: newUser } = await supabaseClient.from('users').insert([{ username, full_name: fullName, total_points:0 }]).select().single();
-            user = newUser;
+    <script>
+        async function loadScores() {
+            // เราใช้ window.supabaseClient ที่เพื่อนตั้งค่าไว้ครับ
+            const { data } = await window.supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20);
+            const tbody = document.getElementById('scoreBody');
+            tbody.innerHTML = data.map((u, i) => `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`).join('');
         }
-        currentUser = user;
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('bracketSection').style.display = 'flex';
-        // (ฟังก์ชัน initLayout ของเพื่อนเรียกตรงนี้ต่อได้เลย)
-    }
-
-    // 2. ฟังก์ชันโหลดคะแนน (อันนี้อันเดียวจบ ไม่ต้องประกาศซ้ำ)
-    async function loadScores() {
-        const { data, error } = await supabaseClient
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false })
-            .limit(10); 
-
-        if (error) { console.error("ดึงข้อมูลไม่ได้:", error); return; }
-
-        const tbody = document.getElementById('scoreBody');
-        tbody.innerHTML = '';
-        data.forEach((u, index) => {
-            tbody.innerHTML += `<tr>
-                <td style="text-align:center;">${index + 1}</td>
-                <td>${u.username}</td>
-                <td style="text-align:right;">${u.total_points}</td>
-            </tr>`;
-        });
-    }
-
-    // เริ่มทำงานเมื่อโหลดหน้าเว็บเสร็จ
-    loadScores();
-</script>
-
+        loadScores();
+    </script>
 </body>
 </html>
