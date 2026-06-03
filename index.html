@@ -178,16 +178,17 @@
 </div>
 <div id="score-container">
     <h3>ตารางคะแนนผู้เล่น</h3>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>คะแนน</th>
-            </tr>
-        </thead>
-        <tbody id="scoreBody">
-    </tbody>
-    </table>
+    <table border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="width: 50px;">อันดับ</th>
+            <th>Username</th>
+            <th>คะแนน</th>
+        </tr>
+    </thead>
+    <tbody id="scoreBody">
+        </tbody>
+</table>
 </div>
 <script>
     const DB_URL = "https://qbqjogfflfnsldjkpiog.supabase.co";
@@ -385,20 +386,33 @@ function buildEmptyColumns(containerId, count, stagePrefix) {
 }
 </script>
 <script>
-    async function loadScores() {
-        const { data, error } = await supabaseClient 
-    .from('users')
-    .select('username, total_points')
-    .order('total_points', { ascending: false });
+   async function loadScores() {
+    // 1. ดึงข้อมูล 10 อันดับแรก โดยเรียงจากแต้มมากไปน้อย
+    const { data, error } = await supabaseClient
+        .from('users')
+        .select('username, total_points')
+        .order('total_points', { ascending: false })
+        .limit(10); 
 
-        if (error) { console.error(error); return; }
-
-        const tbody = document.getElementById('scoreBody');
-        tbody.innerHTML = '';
-        data.forEach(u => {
-            tbody.innerHTML += `<tr><td>${u.username}</td><td>${u.total_points}</td></tr>`;
-        });
+    if (error) { 
+        console.error("ดึงข้อมูลไม่ได้:", error); 
+        return; 
     }
+
+    // 2. เอาข้อมูลมาแปะลงตาราง
+    const tbody = document.getElementById('scoreBody');
+    tbody.innerHTML = ''; // ล้างของเก่าทิ้งก่อน
+    
+    data.forEach((u, index) => {
+        // เพิ่มเลขลำดับหน้าชื่อ
+        tbody.innerHTML += `
+            <tr>
+                <td style="text-align:center;">${index + 1}</td>
+                <td>${u.username}</td>
+                <td style="text-align:right;">${u.total_points}</td>
+            </tr>`;
+    });
+}
     loadScores();
 </script>
 
