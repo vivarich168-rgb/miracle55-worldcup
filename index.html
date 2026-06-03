@@ -20,11 +20,10 @@
 
     <div id="loginArea">
         <input type="text" id="username" placeholder="Username">
-        <input type="text" id="fullName" placeholder="ชื่อ-นามสกุล">
-        <button id="loginBtn">เข้าสู่ระบบ & เริ่มทายผล</button>
+        <button id="loginBtn">เข้าสู่ระบบ</button>
     </div>
 
-    <div id="bracketArea" class="bracket">
+    <div id="bracketArea" class="bracket" style="display:none;">
         <div class="match">คู่ที่ 1<br>ทีม A vs ทีม B</div>
         <div class="match">คู่ที่ 2<br>ทีม C vs ทีม D</div>
     </div>
@@ -35,30 +34,35 @@
     </table>
 
 <script>
-    // ตั้งค่า Supabase (ใช้ URL และ KEY ของคุณ)
-    const supabase = supabase.createClient('https://qbqjogfflfnsldjkpiog.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU');
+    // 1. ตั้งค่า Supabase (ระวังอย่าประกาศตัวแปรชื่อเดิมซ้ำ)
+    const supabaseUrl = 'https://qbqjogfflfnsldjkpiog.supabase.co'; 
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU';
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // จัดการ Login
+    // 2. จัดการ Login ด้วย Event Listener
     document.getElementById('loginBtn').addEventListener('click', async () => {
         const username = document.getElementById('username').value.trim();
-        const fullName = document.getElementById('fullName').value.trim();
-        
         if(!username) return alert('กรุณากรอก Username');
 
-        const { data, error } = await supabase.from('users')
-            .upsert({ username: username, full_name: fullName, total_points: 0 })
-            .select();
+        const { data, error } = await client.from('users')
+            .select('*')
+            .eq('username', username)
+            .maybeSingle();
 
-        if(error) {
-            alert('เกิดข้อผิดพลาด: ' + error.message);
+        if(data) {
+            document.getElementById('loginArea').style.display = 'none';
+            document.getElementById('bracketArea').style.display = 'flex';
+            alert('ยินดีต้อนรับ ' + data.username);
         } else {
-            alert('ล็อกอินสำเร็จ!');
+            alert('ไม่พบผู้ใช้งานนี้');
         }
     });
 
-    // โหลด Leaderboard
+    // 3. โหลด Leaderboard
     async function loadLeaderboard() {
-        const { data } = await supabase.from('users').select('username, total_points').order('total_points', { ascending: false });
+        const { data } = await client.from('users')
+            .select('username, total_points')
+            .order('total_points', { ascending: false });
         if(data) {
             document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => 
                 `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`
