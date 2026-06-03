@@ -12,12 +12,12 @@
         h1 { color: #58a6ff; }
         .login-card { max-width: 450px; margin: 0 auto 20px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
         input[type="text"] { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 12px; background: #1f6feb; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-login:disabled { background: #555; cursor: not-allowed; }
         
-        /* สไตล์ Bracket */
         #bracketSection { display: none; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; }
         .match-block { background: linear-gradient(145deg, #1e252e, #161b22); border: 1px solid #30363d; border-radius: 8px; padding: 12px; width: 250px; }
         
-        /* สไตล์ตารางคะแนน */
         #score-container { max-width: 600px; margin: 40px auto; animation: fadeIn 1.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .rank-1 { background-color: #ffd700 !important; color: #000 !important; font-weight: bold; }
@@ -31,33 +31,19 @@
     <h1>🏆⚽Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
 </div>
 
-<!-- ส่วนล็อกอิน -->
 <div id="loginSection" class="login-card">
     <h3>👤 กรอกข้อมูลผู้เล่น</h3>
-    <input type="text" id="username" placeholder="ชื่อ Username">
+    <input type="text" id="username" placeholder="ชื่อ Username (ห้ามซ้ำ)">
     <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง">
-    <button style="width:100%; padding:12px; background:#1f6feb; border:none; color:white; border-radius:6px; cursor:pointer;" onclick="checkAndLoginUser()">เข้าสู่ระบบ</button>
+    <button id="loginBtn" class="btn-login" onclick="checkAndLoginUser()">เข้าสู่ระบบ</button>
 </div>
 
-<!-- ส่วนแผนผังทายผล (ถูกซ่อนไว้จนกว่าจะ Login) -->
-<div id="bracketSection">
-    <div class="match-block">
-        <p style="text-align:center; margin-top:0;">คู่เปิดสนาม</p>
-        <div style="display:flex; justify-content:space-between;">
-            <span>ทีม A</span> <span>VS</span> <span>ทีม B</span>
-        </div>
-    </div>
-    <!-- เพื่อนสามารถเพิ่มคู่บอลตรงนี้ได้เลยครับ -->
-</div>
+<div id="bracketSection"></div>
 
 <div id="score-container">
     <h3>ตารางคะแนนผู้เล่น (Top 20)</h3>
     <table border="1" style="width:100%; border-collapse: collapse; border-color: #30363d;">
-        <thead>
-            <tr style="background-color: #161b22;">
-                <th style="padding: 10px;">อันดับ</th><th>Username</th><th style="padding: 10px;">คะแนน</th>
-            </tr>
-        </thead>
+        <thead><tr style="background-color: #161b22;"><th style="padding: 10px;">อันดับ</th><th>Username</th><th style="padding: 10px;">คะแนน</th></tr></thead>
         <tbody id="scoreBody"></tbody>
     </table>
 </div>
@@ -66,23 +52,39 @@
     async function checkAndLoginUser() {
         const username = document.getElementById('username').value.trim();
         const fullName = document.getElementById('fullName').value.trim();
-        if(!username) return alert('กรอก Username ด้วยครับ');
+        const btn = document.getElementById('loginBtn');
 
-        let { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).single();
-        if (error && error.code === 'PGRST116') {
-            const { data: newUser } = await supabaseClient.from('users').insert([{ username, full_name: fullName, total_points:0 }]).select().single();
-            user = newUser;
+        if(!username || !fullName) return alert('กรุณากรอกให้ครบทั้ง Username และ ชื่อจริงครับ!');
+
+        // --- ระบบเช็คชื่อซ้ำ (ข้อ 2) ---
+        btn.disabled = true; // ล็อกปุ่มกันกดซ้ำ
+        btn.innerText = "กำลังตรวจสอบชื่อ..."; 
+
+        let { data: existingUser } = await supabaseClient.from('users').select('*').eq('username', username).single();
+        
+        if (existingUser) {
+            alert('❌ ชื่อ Username นี้มีคนใช้แล้วครับ เพื่อนลองเปลี่ยนชื่อดูนะ!');
+            btn.disabled = false;
+            btn.innerText = "เข้าสู่ระบบ";
+            return;
         }
-        // ซ่อน Login โชว์ Bracket
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('bracketSection').style.display = 'flex';
-        alert('ยินดีต้อนรับ ' + username + ' เริ่มทายผลได้เลยครับ!');
+
+        // ถ้าชื่อไม่ซ้ำ ทำการสมัครใหม่
+        const { data: newUser, error } = await supabaseClient.from('users').insert([{ username, full_name: fullName, total_points:0 }]).select().single();
+        
+        if(error) {
+            alert('เกิดข้อผิดพลาด: ' + error.message);
+            btn.disabled = false;
+            btn.innerText = "เข้าสู่ระบบ";
+        } else {
+            alert('✅ ยินดีด้วยครับ! สมัครสำเร็จ เริ่มทายผลได้เลย!');
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('bracketSection').style.display = 'flex';
+        }
     }
 
     async function loadScores() {
-        const { data, error } = await supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20); 
-        if (error) return;
-
+        const { data } = await supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20); 
         const tbody = document.getElementById('scoreBody');
         tbody.innerHTML = '';
         data.forEach((u, index) => {
@@ -98,6 +100,5 @@
 
     loadScores();
 </script>
-
 </body>
 </html>
