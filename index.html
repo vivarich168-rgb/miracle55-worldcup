@@ -6,43 +6,28 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; }
-        .login-card { max-width: 450px; margin: 0 auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
-        .btn-login { width: 100%; padding: 12px; background: #1f6feb; border: none; color: white; cursor: pointer; }
-        #bracketSection { display: none; text-align: center; padding: 20px; border: 1px solid #30363d; margin: 20px auto; max-width: 450px; }
+        body { background-color: #0d1117; color: #fff; text-align: center; font-family: sans-serif; }
+        table { width: 90%; max-width: 600px; margin: 20px auto; border-collapse: collapse; }
+        td, th { padding: 10px; border: 1px solid #30363d; }
     </style>
 </head>
 <body>
+    <h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1>
+    
+    <h3>ตารางคะแนนผู้เล่น (Top 20)</h3>
+    <table id="scoreTable">
+        <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
+        <tbody id="scoreBody"></tbody>
+    </table>
 
-<h1 style="text-align:center;">🏆 Miracle55 🏆</h1>
-
-<div id="loginSection" class="login-card">
-    <input type="text" id="username" placeholder="Username">
-    <button id="loginBtn" class="btn-login" onclick="login()">เข้าสู่ระบบ</button>
-</div>
-
-<div id="bracketSection">
-    <h3>คู่เปิดสนาม</h3>
-    <p>ทีม A VS ทีม B</p>
-</div>
-
-<script>
-    async function login() {
-        const username = document.getElementById('username').value.trim();
-        if(!username) return alert('กรอกชื่อด้วยครับ');
-        
-        // ตรงนี้ถ้าใช้ window.supabaseClient ตามที่ผมแนะนำจะชัวร์สุดครับ
-        try {
-            const { data } = await window.supabaseClient.from('users').select('*').eq('username', username).single();
-            if(data) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('bracketSection').style.display = 'block';
-                alert('ยินดีต้อนรับ!');
-            }
-        } catch (e) {
-            alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    <script>
+        // ฟังก์ชันโหลดคะแนนที่นิ่งที่สุด
+        async function loadScores() {
+            const { data } = await window.supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20);
+            const tbody = document.getElementById('scoreBody');
+            tbody.innerHTML = data.map((u, i) => `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`).join('');
         }
-    }
-</script>
+        loadScores();
+    </script>
 </body>
 </html>
