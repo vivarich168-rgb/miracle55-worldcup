@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="calculate.js"></script>
+</head>
+<body>
+    <input type="number" id="match-id" placeholder="เลข ID คู่บอล">
+    <input type="number" id="actual-a" placeholder="สกอร์ A">
+    <input type="number" id="actual-b" placeholder="สกอร์ B">
+    <button onclick="updateScore()">บันทึกผลการแข่งขัน</button>
+
+    <script>
+    async function updateScore() {
+        const matchId = document.getElementById('match-id').value;
+        const scoreA = document.getElementById('actual-a').value;
+        const scoreB = document.getElementById('actual-b').value;
+
+        if (!matchId || !scoreA || !scoreB) {
+            alert("กรุณากรอกข้อมูลให้ครบทุกช่อง!");
+            return;
+        }
+
+        const { data, error } = await supabaseClient
+            .from('matches')
+            .update({ 
+                actual_score_a: parseInt(scoreA), 
+                actual_score_b: parseInt(scoreB),
+                is_finished: true 
+            })
+            .eq('id', parseInt(matchId));
+
+        if (error) {
+            alert('เกิดข้อผิดพลาดจาก Supabase: ' + error.message);
+        } else {
+            alert('🎉 อัปเดตผลสำเร็จ! กำลังคำนวณแต้ม...');
+            // ตรวจสอบว่าฟังก์ชันใน calculate.js พร้อมใช้งานไหม
+            if (typeof calculateAndSaveScores === 'function') {
+                await calculateAndSaveScores(matchId);
+            } else {
+                console.error("ฟังก์ชัน calculateAndSaveScores ไม่พบในไฟล์ calculate.js");
+            }
+        }
+    }
+    </script>
+</body>
+</html>
