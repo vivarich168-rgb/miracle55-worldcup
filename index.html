@@ -185,7 +185,7 @@
             </tr>
         </thead>
         <tbody id="scoreBody">
-            </tbody>
+    </tbody>
     </table>
 </div>
 <script>
@@ -385,10 +385,10 @@ function buildEmptyColumns(containerId, count, stagePrefix) {
 </script>
 <script>
     async function loadScores() {
-        const { data, error } = await supabase
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false });
+        const { data, error } = await supabaseClient 
+    .from('users')
+    .select('username, total_points')
+    .order('total_points', { ascending: false });
 
         if (error) { console.error(error); return; }
 
