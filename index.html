@@ -9,14 +9,16 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; }
         .header-zone { text-align: center; margin-bottom: 20px; }
         h1 { color: #58a6ff; }
-        .login-card { max-width: 450px; margin: 20px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
-        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; background: #0d1117; border: 1px solid #30363d; color: white; box-sizing: border-box; }
-        .btn-submit { width: 100%; padding: 12px; background: #1f6feb; border: none; color: white; font-weight: bold; cursor: pointer; border-radius: 6px; }
         
-        /* Leaderboard Style */
+        /* สไตล์ผังทายผล */
+        .bracket-wrapper { display: flex; justify-content: center; gap: 10px; overflow-x: auto; padding: 20px 0; }
+        .bracket-column { display: flex; flex-direction: column; gap: 10px; }
+        .match-block { background: #161b22; border: 1px solid #30363d; padding: 10px; border-radius: 8px; width: 150px; }
+        
+        /* สไตล์ตาราง Leaderboard */
         .leaderboard-section { max-width: 600px; margin: 40px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
-        table { width: 100%; border-collapse: collapse; color: #c9d1d9; }
-        th, td { padding: 12px; border-bottom: 1px solid #30363d; text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid #30363d; text-align: center; }
     </style>
 </head>
 <body>
@@ -25,21 +27,26 @@
     <h1>🏆⚽Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
 </div>
 
-<div id="loginSection" class="login-card">
-    <input type="text" id="username" placeholder="Username">
-    <input type="text" id="fullName" placeholder="ชื่อ-นามสกุล">
-    <button class="btn-submit" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เริ่มทายผล</button>
+<div id="loginSection" style="max-width: 450px; margin: 0 auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d;">
+    <input type="text" id="username" placeholder="Username" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #0d1117; border: 1px solid #30363d; color: white; box-sizing: border-box;">
+    <input type="text" id="fullName" placeholder="ชื่อ-นามสกุล" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #0d1117; border: 1px solid #30363d; color: white; box-sizing: border-box;">
+    <button onclick="checkAndLoginUser()" style="width: 100%; padding: 12px; background: #1f6feb; border: none; color: white; font-weight: bold; cursor: pointer;">เข้าสู่ระบบ & เริ่มทายผล</button>
+</div>
+
+<div class="bracket-wrapper" id="bracketSection" style="display: none;">
+    <div class="bracket-column" id="left-side">
+        <div class="match-block">ตัวอย่างคู่ที่ 1<br>ทีม A vs ทีม B</div>
+    </div>
+    <div class="bracket-column" id="right-side">
+        <div class="match-block">ตัวอย่างคู่ที่ 2<br>ทีม C vs ทีม D</div>
+    </div>
 </div>
 
 <div class="leaderboard-section">
     <h3 style="text-align: center; color: #58a6ff;">🏆 ตารางคะแนน Leaderboard (Top 20)</h3>
     <table>
-        <thead>
-            <tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr>
-        </thead>
-        <tbody id="leaderboardBody">
-            <tr><td colspan="3">กำลังโหลดข้อมูล...</td></tr>
-        </tbody>
+        <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
+        <tbody id="leaderboardBody"><tr><td colspan="3">กำลังโหลด...</td></tr></tbody>
     </table>
 </div>
 
@@ -50,46 +57,23 @@
 
     async function checkAndLoginUser() {
         const username = document.getElementById('username').value.trim();
-        const fullName = document.getElementById('fullName').value.trim();
+        if (!username) return alert('กรุณากรอก Username');
         
-        if (!username) { alert('กรุณากรอก Username'); return; }
-
-        let { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).single();
-        
-        if (error && error.code === 'PGRST116') {
-            const { data: newUser, error: insertErr } = await supabaseClient
-                .from('users')
-                .insert([{ username, full_name: fullName, total_points: 0 }])
-                .select().single();
+        let { data: user } = await supabaseClient.from('users').select('*').eq('username', username).single();
+        if (!user) {
+            const { data: newUser } = await supabaseClient.from('users').insert([{ username, total_points: 0 }]).select().single();
             user = newUser;
         }
-        
-        if (user) {
-            alert('ยินดีต้อนรับ ' + user.username + ' เข้าสู่ระบบ!');
-            document.getElementById('loginSection').style.display = 'none';
-        }
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('bracketSection').style.display = 'flex';
+        alert('ยินดีต้อนรับ ' + user.username);
     }
 
     async function loadLeaderboard() {
-        const { data, error } = await supabaseClient
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false })
-            .limit(20);
-
-        if (error) {
-            console.error("Error loading:", error);
-            return;
+        const { data } = await supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20);
+        if(data) {
+            document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`).join('');
         }
-
-        const tbody = document.getElementById('leaderboardBody');
-        tbody.innerHTML = data.map((u, i) => `
-            <tr>
-                <td>${i + 1}</td>
-                <td>${u.username}</td>
-                <td>${u.total_points}</td>
-            </tr>
-        `).join('');
     }
 
     loadLeaderboard();
