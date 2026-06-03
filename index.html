@@ -7,15 +7,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <style>
-        /* CSS ของเดิมที่เพื่อนมีอยู่แล้ว ใช้ได้เลยครับ */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 20px; }
         .header-zone { text-align: center; margin-bottom: 20px; }
         h1 { color: #58a6ff; }
-        .login-card { max-width: 450px; margin: 0 auto 20px auto; background: #161b22; padding: 20px; border-radius: 10px; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; margin-bottom: 15px; box-sizing: border-box; }
-        .bracket-wrapper { display: flex; justify-content: space-between; overflow-x: auto; padding: 20px 0; }
-        .match-block { background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; margin-bottom: 10px; }
-        .team-row { display: flex; justify-content: space-between; align-items: center; background-color: #21262d; padding: 6px 10px; border-radius: 4px; font-size: 13px; }
+        .login-card { max-width: 450px; margin: 0 auto 20px auto; background: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; }
+        input[type="text"] { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        
+        /* สไตล์ Bracket */
+        #bracketSection { display: none; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; }
+        .match-block { background: linear-gradient(145deg, #1e252e, #161b22); border: 1px solid #30363d; border-radius: 8px; padding: 12px; width: 250px; }
+        
+        /* สไตล์ตารางคะแนน */
+        #score-container { max-width: 600px; margin: 40px auto; animation: fadeIn 1.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .rank-1 { background-color: #ffd700 !important; color: #000 !important; font-weight: bold; }
+        .rank-2 { background-color: #c0c0c0 !important; color: #000 !important; }
+        .rank-3 { background-color: #cd7f32 !important; color: #fff !important; }
     </style>
 </head>
 <body>
@@ -24,6 +31,7 @@
     <h1>🏆⚽Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
 </div>
 
+<!-- ส่วนล็อกอิน -->
 <div id="loginSection" class="login-card">
     <h3>👤 กรอกข้อมูลผู้เล่น</h3>
     <input type="text" id="username" placeholder="ชื่อ Username">
@@ -31,21 +39,30 @@
     <button style="width:100%; padding:12px; background:#1f6feb; border:none; color:white; border-radius:6px; cursor:pointer;" onclick="checkAndLoginUser()">เข้าสู่ระบบ</button>
 </div>
 
-<div id="bracketSection" class="bracket-wrapper" style="display: none;">
+<!-- ส่วนแผนผังทายผล (ถูกซ่อนไว้จนกว่าจะ Login) -->
+<div id="bracketSection">
+    <div class="match-block">
+        <p style="text-align:center; margin-top:0;">คู่เปิดสนาม</p>
+        <div style="display:flex; justify-content:space-between;">
+            <span>ทีม A</span> <span>VS</span> <span>ทีม B</span>
+        </div>
     </div>
+    <!-- เพื่อนสามารถเพิ่มคู่บอลตรงนี้ได้เลยครับ -->
+</div>
 
-<div id="score-container" style="max-width: 600px; margin: 20px auto;">
-    <h3>ตารางคะแนนผู้เล่น (Top 10)</h3>
-    <table border="1" style="width:100%; border-collapse: collapse;">
+<div id="score-container">
+    <h3>ตารางคะแนนผู้เล่น (Top 20)</h3>
+    <table border="1" style="width:100%; border-collapse: collapse; border-color: #30363d;">
         <thead>
-            <tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr>
+            <tr style="background-color: #161b22;">
+                <th style="padding: 10px;">อันดับ</th><th>Username</th><th style="padding: 10px;">คะแนน</th>
+            </tr>
         </thead>
         <tbody id="scoreBody"></tbody>
     </table>
 </div>
 
 <script>
-    // 1. ฟังก์ชันล็อกอิน
     async function checkAndLoginUser() {
         const username = document.getElementById('username').value.trim();
         const fullName = document.getElementById('fullName').value.trim();
@@ -56,36 +73,32 @@
             const { data: newUser } = await supabaseClient.from('users').insert([{ username, full_name: fullName, total_points:0 }]).select().single();
             user = newUser;
         }
-        currentUser = user;
+        // ซ่อน Login โชว์ Bracket
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('bracketSection').style.display = 'flex';
-        // (ฟังก์ชัน initLayout ของเพื่อนเรียกตรงนี้ต่อได้เลย)
+        alert('ยินดีต้อนรับ ' + username + ' เริ่มทายผลได้เลยครับ!');
     }
 
-    // 2. ฟังก์ชันโหลดคะแนน (อันนี้อันเดียวจบ ไม่ต้องประกาศซ้ำ)
     async function loadScores() {
-        const { data, error } = await supabaseClient
-            .from('users')
-            .select('username, total_points')
-            .order('total_points', { ascending: false })
-            .limit(10); 
-
-        if (error) { console.error("ดึงข้อมูลไม่ได้:", error); return; }
+        const { data, error } = await supabaseClient.from('users').select('username, total_points').order('total_points', { ascending: false }).limit(20); 
+        if (error) return;
 
         const tbody = document.getElementById('scoreBody');
         tbody.innerHTML = '';
         data.forEach((u, index) => {
-            tbody.innerHTML += `<tr>
-                <td style="text-align:center;">${index + 1}</td>
-                <td>${u.username}</td>
-                <td style="text-align:right;">${u.total_points}</td>
-            </tr>`;
+            let rowClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+            tbody.innerHTML += `
+                <tr class="${rowClass}">
+                    <td style="text-align:center; padding: 8px;">${index + 1}</td>
+                    <td style="padding: 8px;">${u.username}</td>
+                    <td style="text-align:right; padding: 8px;">${u.total_points}</td>
+                </tr>`;
         });
     }
 
-    // เริ่มทำงานเมื่อโหลดหน้าเว็บเสร็จ
     loadScores();
 </script>
 
 </body>
 </html>
+
