@@ -18,7 +18,7 @@
 
     <div id="loginArea">
         <input type="text" id="username" placeholder="Username">
-        <button onclick="handleLogin()">เข้าสู่ระบบ</button>
+        <button id="loginBtn">เข้าสู่ระบบ</button>
     </div>
 
     <div id="bracketArea" class="bracket" style="display:none;">
@@ -32,31 +32,41 @@
     </table>
 
 <script>
-    // 1. กำหนดตัวแปร supabase ให้ถูกต้อง
+    // 1. ตั้งค่า Supabase (ใส่ URL และ Key ของคุณให้ถูกต้อง)
     const supabaseUrl = 'https://qbqjogfflfnsldjkpiog.supabase.co'; 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 2. ฟังก์ชัน Login ที่ดัก Error ไว้
-    async function handleLogin() {
-        const user = document.getElementById('username').value;
+    // 2. ใช้ Event Listener แทนการเรียก onclick เพื่อป้องกัน Error
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const user = document.getElementById('username').value.trim();
         if(!user) return alert('กรุณากรอก Username');
         
         try {
-            const { data, error } = await supabase.from('users').select('*').eq('username', user).single();
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('username', user)
+                .single();
+            
             if (error) throw error;
             
+            // ถ้า login สำเร็จ
             document.getElementById('loginArea').style.display = 'none';
             document.getElementById('bracketArea').style.display = 'flex';
             alert('ยินดีต้อนรับ ' + user);
         } catch (e) {
             alert('ไม่พบผู้ใช้งานหรือเกิดข้อผิดพลาด: ' + e.message);
         }
-    }
+    });
 
     // 3. ฟังก์ชันดึงตารางคะแนน
     async function loadLeaderboard() {
-        const { data, error } = await supabase.from('users').select('username, total_points').order('total_points', { ascending: false });
+        const { data, error } = await supabaseClient
+            .from('users')
+            .select('username, total_points')
+            .order('total_points', { ascending: false });
+            
         if (data) {
             document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => 
                 `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`
@@ -64,7 +74,7 @@
         }
     }
     
-    // เรียกให้ทำงานทันทีที่โหลดหน้าเว็บ
+    // เรียกโหลดตารางเมื่อหน้าเว็บโหลดเสร็จ
     loadLeaderboard();
 </script>
 </body>
