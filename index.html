@@ -2,41 +2,374 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Miracle55 - FIFA Worldcup 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #0d1117; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-        .bracket { display: flex; justify-content: center; gap: 10px; margin: 20px; }
-        table { width: 100%; max-width: 600px; margin: auto; border-collapse: collapse; background: #161b22; }
-        th, td { border: 1px solid #30363d; padding: 10px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 20px;
+        }
+        .header-zone { text-align: center; margin-bottom: 20px; }
+        h1 { color: #58a6ff; text-shadow: 0 0 10px rgba(88,166,255,0.3); }
+        
+        .bracket-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        .bracket-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 950px;
+            width: 200px;
+        }
+        .match-block {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #21262d;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .team-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+        .score-input {
+            width: 45px;
+            height: 28px;
+            text-align: center;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #58a6ff;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .center-column {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-submit-all {
+            display: block;
+            width: 280px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(35,134,54,0.4);
+        }
+        .btn-submit-all:hover { background-color: #2ea043; transform: scale(1.02); }
+        .login-card {
+            max-width: 450px;
+            margin: 0 auto 20px auto;
+            background: #161b22;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+        }
+        input[type="text"] {
+            width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d;
+            border-radius: 6px; color: white; margin-bottom: 15px; box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
 
-    <h1>🏆 Miracle55 FIFA Worldcup 2026 🏆</h1>
+<div class="header-zone">
+    <h1>🏆⚽Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
+    <p style="color: #8b949e;">ชิงเงินรางวัลรวม 100,000 บาท</p>
+</div>
 
-    <div class="bracket">
-        <div style="background:#21262d; padding:15px; border-radius:8px;">คู่ที่ 1<br>ทีม A vs ทีม B</div>
+<!-- ส่วนล็อกอิน -->
+<div id="loginSection" class="login-card">
+    <h3 style="text-align:center; color:#58a6ff; margin-top:0;">👤 กรอกข้อมูลผู้เล่นเพื่อเริ่มทายผล</h3>
+    <input type="text" id="username" placeholder="ชื่อ Username">
+    <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง">
+    <button style="width:100%; padding:12px; background:#1f6feb; border:none; color:white; font-weight:bold; border-radius:6px; cursor:pointer;" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เปิดตารางทายผล</button>
+</div>
+
+<div id="loginStatus" style="text-align:center; color:#2ea043; font-weight:bold; margin-bottom:20px; display:none;"></div>
+
+<!-- แผงผังทัวร์นาเมนต์มิกซ์ทายผลสกอร์ -->
+<div class="bracket-wrapper" id="bracketSection" style="display: none;">
+    
+    <!-- ฝั่งซ้าย (แมตช์ 1-8) -->
+    <div class="bracket-column" id="col-r32-left"></div> 
+    <div class="bracket-column" id="col-r16-left"></div> 
+    <div class="bracket-column" id="col-r8-left"></div>  
+    <div class="bracket-column" id="col-r4-left"></div>  
+
+    <!-- ตรงกลาง: นัดชิงชนะเลิศ & ชิงที่ 3 -->
+    <div class="center-column">
+        <div class="match-block" style="border-color: #f0883e; width: 100%;">
+            <div style="text-align:center; font-size:12px; color:#f0883e; font-weight:bold;">🏆 นัดชิงชนะเลิศ</div>
+            <div class="team-row">
+                <span class="team-name" id="slot-final-1">รอผลสายซ้าย</span>
+                <input type="number" id="score-match-final-a" class="score-input" min="0" oninput="calculateFlow()">
+            </div>
+            <div class="team-row">
+                <span class="team-name" id="slot-final-2">รอผลสายขวา</span>
+                <input type="number" id="score-match-final-b" class="score-input" min="0" oninput="calculateFlow()">
+            </div>
+            <div id="champ-display" style="text-align:center; font-size:14px; color:#2ea043; font-weight:bold; margin-top:5px;">แชมป์โลก: ??</div>
+        </div>
+        
+        <div class="match-block" style="border-color: #8b949e; width: 100%;">
+            <div style="text-align:center; font-size:12px; color:#8b949e; font-weight:bold;">🥉 นัดชิงอันดับที่ 3</div>
+            <div class="team-row">
+                <span class="team-name" id="slot-third-1">รอทีมแพ้สายซ้าย</span>
+                <input type="number" id="score-match-third-a" class="score-input" min="0">
+            </div>
+            <div class="team-row">
+                <span class="team-name" id="slot-third-2">รอทีมแพ้สายขวา</span>
+                <input type="number" id="score-match-third-b" class="score-input" min="0">
+            </div>
+        </div>
+
+        <button class="btn-submit-all" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
     </div>
 
-    <table>
-        <thead><tr><th>อันดับ</th><th>Username</th><th>คะแนน</th></tr></thead>
-        <tbody id="leaderboardBody"><tr><td colspan="3">กำลังโหลด...</td></tr></tbody>
-    </table>
+    <!-- ฝั่งขวา (แมตช์ 9-16) -->
+    <div class="bracket-column" id="col-r4-right"></div>  
+    <div class="bracket-column" id="col-r8-right"></div>  
+    <div class="bracket-column" id="col-r16-right"></div> 
+    <div class="bracket-column" id="col-r32-right"></div> 
 
-    <script>
-        // ใส่ URL และ Key ของคุณตรงนี้
-        const supabase = supabase.createClient('https://qbqjogfflfnsldjkpiog.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU');
+</div>
 
-        async function init() {
-            const { data } = await supabase.from('users').select('username, total_points').order('total_points', { ascending: false });
-            if (data) {
-                document.getElementById('leaderboardBody').innerHTML = data.map((u, i) => 
-                    `<tr><td>${i+1}</td><td>${u.username}</td><td>${u.total_points}</td></tr>`
-                ).join('');
-            }
+<div style="text-align:center; width: 280px; margin: 10px auto; padding: 10px; background: #161b22; border: 1px solid #30363d; border-radius: 8px;">
+    <div style="font-size: 12px; color: #58a6ff; font-weight: bold; margin-bottom: 5px;">⚽⚽⚽ ดาวซัลโว (Golden Boot)🥇🥇🥇</div>
+    <input type="text" id="top-scorer-guess" placeholder="พิมพ์ชื่อนักเตะ..." style="width: 90%; padding: 5px; border-radius: 4px; background: #0d1117; border: 1px solid #30363d; color: white; text-align: center;">
+</div>
+
+<script>
+    const DB_URL = "https://qbqjogfflfnsldjkpiog.supabase.co";
+    const DB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFicWpvZ2ZmbGZuc2xkamtwaW9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzA5ODcsImV4cCI6MjA5NTY0Njk4N30.Gbi0Z814_hW5Z3nzaOr_icMRkguTGsziUbl_7Sy4zAU";
+    const supabaseClient = supabase.createClient(DB_URL, DB_KEY);
+    let currentUser = null;
+
+    // แบ่งคู่รอบแรกครบ 16 คู่ บาลานซ์ ซ้าย 8 ขวา 8 ลงตัวสมบูรณ์แบบ
+    const initialMatches = {
+        left: [
+            { id: 1, t1: "บราซิล", t2: "อังกฤษ" },     { id: 2, t1: "ฝรั่งเศส", t2: "อาร์เจนตินา" },
+            { id: 3, t1: "สเปen", t2: "เยอรมนี" },      { id: 4, t1: "โปรตุเกส", t2: "อิตาลี" },
+            { id: 5, t1: "เนเธอร์แลนด์", t2: "โครเอเชีย" }, { id: 6, t1: "เบลเยียม", t2: "โมร็อกโก" },
+            { id: 7, t1: "ญี่ปุ่น", t2: "เกาหลีใต้" },    { id: 8, t1: "อุรุกวัย", t2: "เซเนกัล" }
+        ],
+        right: [
+            { id: 9, t1: "สหรัฐอเมริกา", t2: "เม็กซิโก" }, { id: 10, t1: "สวิตเซอร์แลนด์", t2: "เดนมาร์ก" },
+            { id: 11, t1: "ออสเตรเลีย", t2: "ซาอุดีอาระเบีย" }, { id: 12, t1: "แคนาดา", t2: "เอกวาดอร์" },
+            { id: 13, t1: "ตูนิเซีย", t2: "โปแลนด์" },     { id: 14, t1: "ยูเครน", t2: "เวลส์" },
+            { id: 15, t1: "สวีเดน", t2: "ออสเตรีย" },     { id: 16, t1: "กานา", t2: "แคเมอรูน" }
+        ]
+    };
+
+    function initLayout() {
+        buildR32Columns('col-r32-left', initialMatches.left);
+        buildR32Columns('col-r32-right', initialMatches.right);
+
+        buildEmptyColumns('col-r16-left', 4, 'left-r16');
+        buildEmptyColumns('col-r8-left', 2, 'left-r8');
+        buildEmptyColumns('col-r4-left', 1, 'left-r4');
+
+        buildEmptyColumns('col-r4-right', 1, 'right-r4');
+        buildEmptyColumns('col-r8-right', 2, 'right-r8');
+        buildEmptyColumns('col-r16-right', 4, 'right-r16');
+    }
+
+    function buildR32Columns(containerId, matches) {
+        const container = document.getElementById(containerId);
+        matches.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'match-block';
+            div.innerHTML = `
+                <div style="text-align:center; font-size:10px; color:#8b949e;">คู่ที่ ${m.id}</div>
+                <div class="team-row"><span class="team-name" id="m-${m.id}-t1">${m.t1}</span><input type="number" id="score-m-${m.id}-a" class="score-input" min="0" oninput="calculateFlow()"></div>
+                <div class="team-row"><span class="team-name" id="m-${m.id}-t2">${m.t2}</span><input type="number" id="score-m-${m.id}-b" class="score-input" min="0" oninput="calculateFlow()"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+function buildEmptyColumns(containerId, count, stagePrefix) {
+        const container = document.getElementById(containerId);
+        
+        // กำหนดชื่อรอบตาม ID ของ container ที่เราส่งเข้ามา
+        let stageName = "สายทายผล";
+        if (containerId.includes('r16')) stageName = "รอบ 16 ทีมสุดท้าย";
+        else if (containerId.includes('r8')) stageName = "รอบ 8 ทีมสุดท้าย";
+        else if (containerId.includes('r4')) stageName = "รอบ 4 ทีมสุดท้าย";
+
+        for(let i=1; i<=count; i++) {
+            const div = document.createElement('div');
+            div.className = 'match-block';
+            div.innerHTML = `
+                <div style="text-align:center; font-size:10px; color:#f0883e; font-weight:bold;">${stageName}</div>
+                <div class="team-row"><span class="team-name" id="${stagePrefix}-${i}-t1">รอผล...</span><input type="number" id="score-${stagePrefix}-${i}-a" class="score-input" min="0" oninput="calculateFlow()"></div>
+                <div class="team-row"><span class="team-name" id="${stagePrefix}-${i}-t2">รอผล...</span><input type="number" id="score-${stagePrefix}-${i}-b" class="score-input" min="0" oninput="calculateFlow()"></div>
+            `;
+            container.appendChild(div);
         }
-        init();
-    </script>
+    }
+
+    function calculateFlow() {
+        const getWinnerLoser = (t1, t2, s1, s2) => {
+            if(s1 === '' || s2 === '' || t1 === 'รอผล...' || t2 === 'รอผล...') return { w: 'รอผล...', l: 'รอผล...' };
+            return parseInt(s1) >= parseInt(s2) ? { w: t1, l: t2 } : { w: t2, l: t1 };
+        };
+
+        const getVal = (id) => document.getElementById(id).value;
+        const setTxt = (id, txt) => document.getElementById(id).innerText = txt;
+
+        // --- ฝั่งซ้าย: ไหลจากรอบ 32 -> 16 -> 8 -> 4 ---
+        for(let i=1; i<=4; i++) {
+            let idx1 = (i * 2) - 1;
+            let idx2 = i * 2;
+            let mA = getWinnerLoser(document.getElementById(`m-${idx1}-t1`).innerText, document.getElementById(`m-${idx1}-t2`).innerText, getVal(`score-m-${idx1}-a`), getVal(`score-m-${idx1}-b`));
+            let mB = getWinnerLoser(document.getElementById(`m-${idx2}-t1`).innerText, document.getElementById(`m-${idx2}-t2`).innerText, getVal(`score-m-${idx2}-a`), getVal(`score-m-${idx2}-b`));
+            setTxt(`left-r16-${i}-t1`, mA.w); setTxt(`left-r16-${i}-t2`, mB.w);
+        }
+
+        for(let i=1; i<=2; i++) {
+            let idx1 = (i * 2) - 1;
+            let idx2 = i * 2;
+            let r16A = getWinnerLoser(document.getElementById(`left-r16-${idx1}-t1`).innerText, document.getElementById(`left-r16-${idx1}-t2`).innerText, getVal(`score-left-r16-${idx1}-a`), getVal(`score-left-r16-${idx1}-b`));
+            let r16B = getWinnerLoser(document.getElementById(`left-r16-${idx2}-t1`).innerText, document.getElementById(`left-r16-${idx2}-t2`).innerText, getVal(`score-left-r16-${idx2}-a`), getVal(`score-left-r16-${idx2}-b`));
+            setTxt(`left-r8-${i}-t1`, r16A.w); setTxt(`left-r8-${i}-t2`, r16B.w);
+        }
+
+        let r8L_1 = getWinnerLoser(document.getElementById('left-r8-1-t1').innerText, document.getElementById('left-r8-1-t2').innerText, getVal('score-left-r8-1-a'), getVal('score-left-r8-1-b'));
+        let r8L_2 = getWinnerLoser(document.getElementById('left-r8-2-t1').innerText, document.getElementById('left-r8-2-t2').innerText, getVal('score-left-r8-2-a'), getVal('score-left-r8-2-b'));
+        setTxt('left-r4-1-t1', r8L_1.w); setTxt('left-r4-1-t2', r8L_2.w);
+
+        let r4L = getWinnerLoser(document.getElementById('left-r4-1-t1').innerText, document.getElementById('left-r4-1-t2').innerText, getVal('score-left-r4-1-a'), getVal('score-left-r4-1-b'));
+        setTxt('slot-final-1', r4L.w); setTxt('slot-third-1', r4L.l);
+
+
+        // --- ฝั่งขวา: ไหลจากรอบ 32 -> 16 -> 8 -> 4 ---
+        for(let i=1; i<=4; i++) {
+            let idx1 = (i * 2) + 7; 
+            let idx2 = (i * 2) + 8;
+            let mA = getWinnerLoser(document.getElementById(`m-${idx1}-t1`).innerText, document.getElementById(`m-${idx1}-t2`).innerText, getVal(`score-m-${idx1}-a`), getVal(`score-m-${idx1}-b`));
+            let mB = getWinnerLoser(document.getElementById(`m-${idx2}-t1`).innerText, document.getElementById(`m-${idx2}-t2`).innerText, getVal(`score-m-${idx2}-a`), getVal(`score-m-${idx2}-b`));
+            setTxt(`right-r16-${i}-t1`, mA.w); setTxt(`right-r16-${i}-t2`, mB.w);
+        }
+
+        for(let i=1; i<=2; i++) {
+            let idx1 = (i * 2) - 1;
+            let idx2 = i * 2;
+            let r16A = getWinnerLoser(document.getElementById(`right-r16-${idx1}-t1`).innerText, document.getElementById(`right-r16-${idx1}-t2`).innerText, getVal(`score-right-r16-${idx1}-a`), getVal('score-right-r16-' + idx1 + '-b'));
+            let r16B = getWinnerLoser(document.getElementById(`right-r16-${idx2}-t1`).innerText, document.getElementById(`right-r16-${idx2}-t2`).innerText, getVal(`score-right-r16-${idx2}-a`), getVal('score-right-r16-' + idx2 + '-b'));
+            setTxt(`right-r8-${i}-t1`, r16A.w); setTxt(`right-r8-${i}-t2`, r16B.w);
+        }
+
+        let r8R_1 = getWinnerLoser(document.getElementById('right-r8-1-t1').innerText, document.getElementById('right-r8-1-t2').innerText, getVal('score-right-r8-1-a'), getVal('score-right-r8-1-b'));
+        let r8R_2 = getWinnerLoser(document.getElementById('right-r8-2-t1').innerText, document.getElementById('right-r8-2-t2').innerText, getVal('score-right-r8-2-a'), getVal('score-right-r8-2-b'));
+        setTxt('right-r4-1-t1', r8R_1.w); setTxt('right-r4-1-t2', r8R_2.w);
+
+        let r4R = getWinnerLoser(document.getElementById('right-r4-1-t1').innerText, document.getElementById('right-r4-1-t2').innerText, getVal('score-right-r4-1-a'), getVal('score-right-r4-1-b'));
+        setTxt('slot-final-2', r4R.w); setTxt('slot-third-2', r4R.l);
+
+        // นัดชิงชนะเลิศระดับแชมป์โลก
+        let finalMatch = getWinnerLoser(document.getElementById('slot-final-1').innerText, document.getElementById('slot-final-2').innerText, getVal('score-match-final-a'), getVal('score-match-final-b'));
+        document.getElementById('champ-display').innerText = `แชมป์โลก: ${finalMatch.w}`;
+    }
+
+    async function checkAndLoginUser() {
+        const username = document.getElementById('username').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        if(!username) { alert('กรุณากรอก Username ครับ'); return; }
+
+        let { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).single();
+        if (error && error.code === 'PGRST116') {
+            if(!fullName) { alert('กรุณากรอกชื่อจริงเพื่อรับรางวัลแสนบาทครับ'); return; }
+            const { data: newUser } = await supabaseClient.from('users').insert([{ username, full_name: fullName, total_points:0 }]).select().single();
+            user = newUser;
+        }
+        currentUser = user;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('loginStatus').style.display = 'block';
+        document.getElementById('loginStatus').innerText = `👋 ผู้เล่น: ${user.full_name} เริ่มทายสกอร์แมตช์ประวัติศาสตร์!`;
+        document.getElementById('bracketSection').style.display = 'flex';
+        initLayout();
+    }
+
+  async function savePredictions() {
+    // ระบบเช็กเวลาล็อกทายผล 28 มิถุนายน 2026
+    const deadline = new Date("2026-06-28T23:59:59");
+    const now = new Date();
+    
+    if (now > deadline) {
+        alert("ปิดรับทายผลแล้วครับเพื่อน! เดดไลน์คือวันที่ 28 มิ.ย. 23.59 น.");
+        return;
+    }
+
+    if(!currentUser) return;
+    
+    // ดึงค่าดาวซัลโว
+    const topScorer = document.getElementById('top-scorer-guess').value.trim();
+    
+    let predictionRows = [];
+    for(let i=1; i<=16; i++) {
+        let predA = document.getElementById(`score-m-${i}-a`).value;
+        let predB = document.getElementById(`score-m-${i}-b`).value;
+        if(predA !== '' && predB !== '') {
+            predictionRows.push({
+                user_id: currentUser.id,
+                match_id: i,
+                pred_a: parseInt(predA),
+                pred_b: parseInt(predB),
+                top_scorer_guess: topScorer // เพิ่มข้อมูลนี้เข้าไปในตาราง predictions ของเพื่อน
+            });
+        }
+    }
+
+    if(predictionRows.length === 0) {
+        alert('เพื่อนรัก! กรุณากรอกสกอร์อย่างน้อย 1 คู่ก่อนกดส่งนะค๊าบ!');
+        return;
+    }
+
+    const { error } = await supabaseClient.from('predictions').insert(predictionRows);
+    if(error) {
+        alert('บันทึกข้อมูลติดขัด: ' + error.message);
+    } else {
+        alert('🎉 บันทึกผลทายทัวร์นาเมนต์ Miracle55 FIFA Worldcup 2026 เรียบร้อยแล้วค๊าบ!');
+    }
+}
+</script>
 </body>
 </html>
