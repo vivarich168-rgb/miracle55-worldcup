@@ -1,78 +1,82 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miracle55 - FIFA Worldcup 2026</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=v6-ui-upgrade-1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miracle55 - FIFA Worldcup 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css?v=v9-ultimate-1">
 </head>
 <body>
+  <main class="app-shell">
     <section class="hero">
-        <div class="hero-kicker">🏆 Worldcup Prediction Challenge</div>
-        <h1 class="hero-title">Miracle55 <span>Worldcup 2026</span></h1>
-        <p class="hero-desc">
-            ทายผลฟุตบอลโลกแบบ Tournament Bracket ลุ้นรางวัลรวม 100,000 บาท
-            กรอกสกอร์ เลือกทีมเข้ารอบ และไต่อันดับสู่ Leaderboard Top 20
-        </p>
-        <div class="hero-actions">
-            <a class="hero-btn" href="#loginSection">🚀 เริ่มทายผลเลย</a>
-            <a class="hero-btn secondary" href="#leaderboardCard" onclick="loadLeaderboard()">🏅 ดูตารางคะแนน</a>
-        </div>
+      <div class="brand-pill">⚽ Prediction Challenge</div>
+      <h1 class="hero-title">
+        <span class="site" id="siteNameText">Miracle55</span>
+        <span class="event" id="eventNameText">FIFA WORLD CUP 2026</span>
+      </h1>
+      <p class="hero-desc">
+        ทายผลฟุตบอลโลกแบบ Tournament Bracket ลุ้นรางวัลรวม 100,000 บาท
+        พร้อม Leaderboard Top 20 และ Prize Zone สำหรับอันดับ 1-10
+      </p>
+      <div class="hero-actions">
+        <a class="hero-btn" href="#loginSection">🚀 เริ่มทายผลเลย</a>
+        <a class="hero-btn secondary" href="#leaderboardCard" onclick="loadLeaderboard()">🏅 ดู Leaderboard Top 20</a>
+      </div>
     </section>
 
-    <div class="countdown-card" id="countdownCard">
+    <section class="countdown-wrap">
+      <div class="countdown-title">⏰ ปิดรับทายผลวันที่ 28 มิ.ย. 2026 เวลา 23:59 น.</div>
+      <div class="countdown-card">
         <div class="countdown-box"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">วัน</div></div>
         <div class="countdown-box"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">ชั่วโมง</div></div>
         <div class="countdown-box"><div class="countdown-num" id="cd-minutes">--</div><div class="countdown-label">นาที</div></div>
         <div class="countdown-box"><div class="countdown-num" id="cd-seconds">--</div><div class="countdown-label">วินาที</div></div>
-    </div>
-
-    <div class="header-zone">
-        <p class="sub-title">⏰ ปิดรับทายผลวันที่ 28 มิ.ย. 2026 เวลา 23:59 น.</p>
-    </div>
+      </div>
+    </section>
 
     <div id="loginSection" class="login-card">
-        <h3 style="text-align:center; color:#58a6ff; margin-top:0;">👤 กรอกข้อมูลผู้เล่นเพื่อเริ่มทายผล</h3>
-        <input type="text" id="username" placeholder="Username เช่น marke123">
-        <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง สำหรับติดต่อรับรางวัล">
-        <button style="width:100%;" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เปิดตารางทายผล</button>
-        <p class="warning">* กันกดส่งซ้ำ, เก็บทายผลได้ทุกรอบ และรองรับกรณีเสมอให้เลือกทีมเข้ารอบ</p>
+      <h3 style="text-align:center;color:#58a6ff;margin-top:0;">👤 กรอกข้อมูลผู้เล่นเพื่อเริ่มทายผล</h3>
+      <input type="text" id="username" placeholder="Username เช่น marke123">
+      <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง สำหรับติดต่อรับรางวัล">
+      <button style="width:100%;" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เปิดตารางทายผล</button>
+      <p class="warning">* Leaderboard จะแสดง username + ชื่อย่อ เพื่อรักษาความเป็นส่วนตัวและความโปร่งใส</p>
     </div>
 
     <div id="loginStatus" class="status-ok"></div>
 
-    <div class="mini-card" id="topScorerCard" style="display:none; text-align:center;">
-        <div style="font-size:13px; color:#58a6ff; font-weight:800; margin-bottom:8px;">⚽ ดาวซัลโว Golden Boot 🥇</div>
-        <input type="text" id="top-scorer-guess" placeholder="พิมพ์ชื่อนักเตะ...">
+    <div class="mini-card" id="topScorerCard" style="display:none;text-align:center;">
+      <div style="font-size:13px;color:#58a6ff;font-weight:800;margin-bottom:8px;">⚽ ดาวซัลโว Golden Boot 🥇</div>
+      <input type="text" id="top-scorer-guess" placeholder="พิมพ์ชื่อนักเตะ...">
     </div>
 
     <div class="bracket-wrapper" id="bracketSection" style="display:none;">
-        <div class="bracket-column" id="col-r32-left"></div>
-        <div class="bracket-column" id="col-r16-left"></div>
-        <div class="bracket-column" id="col-r8-left"></div>
-        <div class="bracket-column" id="col-r4-left"></div>
+      <div class="bracket-column" id="col-r32-left"></div>
+      <div class="bracket-column" id="col-r16-left"></div>
+      <div class="bracket-column" id="col-r8-left"></div>
+      <div class="bracket-column" id="col-r4-left"></div>
 
-        <div class="center-column">
-            <div id="finalBlock"></div>
-            <div id="thirdBlock"></div>
-            <button class="btn-submit-all pulse" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
-            <button class="btn-muted" onclick="loadLeaderboard()">ดูอันดับคะแนน Top 20</button>
-        </div>
+      <div class="center-column">
+        <div id="finalBlock"></div>
+        <div id="thirdBlock"></div>
+        <button class="btn-submit-all pulse" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
+        <button class="btn-muted" onclick="loadLeaderboard()">ดูอันดับคะแนน Top 20</button>
+      </div>
 
-        <div class="bracket-column" id="col-r4-right"></div>
-        <div class="bracket-column" id="col-r8-right"></div>
-        <div class="bracket-column" id="col-r16-right"></div>
-        <div class="bracket-column" id="col-r32-right"></div>
+      <div class="bracket-column" id="col-r4-right"></div>
+      <div class="bracket-column" id="col-r8-right"></div>
+      <div class="bracket-column" id="col-r16-right"></div>
+      <div class="bracket-column" id="col-r32-right"></div>
     </div>
 
     <div class="leaderboard-card" id="leaderboardCard" style="display:none;">
-        <h3 style="color:#58a6ff; margin-top:0;">🏅 ตารางคะแนน Top 20</h3>
-        <div class="small-note">อันดับ 1-10 มีสีเด่นและ Badge Prize Zone</div>
-        <div id="leaderboardContent"></div>
+      <h3 style="color:#58a6ff;margin-top:0;">🏆 Leaderboard Top 20</h3>
+      <div class="small-note">แสดง username + ชื่อย่อ / อันดับ 1-10 คือ Prize Zone</div>
+      <div id="leaderboardContent"></div>
     </div>
+  </main>
 
-    <script src="supabase-config.js?v=v6-ui-upgrade-1"></script>
-    <script src="app.js?v=v6-ui-upgrade-1"></script>
+  <script src="supabase-config.js?v=v9-ultimate-1"></script>
+  <script src="app.js?v=v9-ultimate-1"></script>
 </body>
 </html>

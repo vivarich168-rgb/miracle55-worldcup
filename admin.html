@@ -1,177 +1,168 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Miracle55 Worldcup</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=v6-ui-upgrade-1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Miracle55 Worldcup</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css?v=v9-ultimate-1">
 </head>
 <body>
+  <main class="app-shell">
     <section class="hero">
-        <div class="hero-kicker">🛠 Admin Dashboard</div>
-        <h1 class="hero-title">Miracle55 <span>Control Center</span></h1>
-        <p class="hero-desc">บันทึกผลจริง คำนวณแต้มอัตโนมัติ และตรวจอันดับ Top 20 แบบรวดเร็วในหน้าเดียว</p>
+      <div class="brand-pill">🛠 Admin Dashboard</div>
+      <h1 class="hero-title">
+        <span class="site">Miracle55</span>
+        <span class="event">CONTROL CENTER</span>
+      </h1>
+      <p class="hero-desc">บันทึกผลจริง คำนวณแต้มอัตโนมัติ และตรวจอันดับ Top 20 แบบรวดเร็วในหน้าเดียว</p>
     </section>
 
-    <div id="adminLogin" class="admin-card">
-        <h3 style="color:#58a6ff; margin-top:0;">เข้าสู่หน้าแอดมิน</h3>
-        <input type="password" id="adminPin" placeholder="ใส่รหัสแอดมิน">
-        <button onclick="unlockAdmin()" style="width:100%;">เข้าสู่ระบบแอดมิน</button>
-        <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น ความปลอดภัยจริงควรใช้ Supabase Auth + RLS Policy</p>
+    <div id="adminLogin" class="admin-card" style="max-width:520px;margin:0 auto 18px;padding:18px;">
+      <h3 style="color:#58a6ff;margin-top:0;">เข้าสู่หน้าแอดมิน</h3>
+      <input type="password" id="adminPin" placeholder="ใส่รหัสแอดมิน">
+      <button onclick="unlockAdmin()" style="width:100%;">เข้าสู่ระบบแอดมิน</button>
+      <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น ความปลอดภัยจริงควรใช้ Supabase Auth + RLS Policy</p>
     </div>
 
     <div id="adminSummary" class="summary-grid" style="display:none;">
-        <div class="summary-card"><div class="summary-label">ผู้เล่นทั้งหมด</div><div class="summary-value cyan" id="sumPlayers">--</div></div>
-        <div class="summary-card"><div class="summary-label">รายการทายผล</div><div class="summary-value" id="sumPredictions">--</div></div>
-        <div class="summary-card"><div class="summary-label">แมตช์จบแล้ว</div><div class="summary-value green" id="sumFinished">--</div></div>
-        <div class="summary-card"><div class="summary-label">รอบันทึกผล</div><div class="summary-value orange" id="sumWaiting">--</div></div>
+      <div class="summary-card"><div class="summary-label">ผู้เล่นทั้งหมด</div><div class="summary-value cyan" id="sumPlayers">--</div></div>
+      <div class="summary-card"><div class="summary-label">รายการทายผล</div><div class="summary-value" id="sumPredictions">--</div></div>
+      <div class="summary-card"><div class="summary-label">แมตช์จบแล้ว</div><div class="summary-value green" id="sumFinished">--</div></div>
+      <div class="summary-card"><div class="summary-label">รอบันทึกผล</div><div class="summary-value orange" id="sumWaiting">--</div></div>
     </div>
 
     <div id="adminPanel" class="admin-grid" style="display:none;">
-        <div class="admin-card">
-            <h3 style="color:#58a6ff; margin-top:0;">กรอกผลการแข่งขันจริง</h3>
-            <input type="text" id="match-key" placeholder="match_key เช่น m-1, left-r16-1, final">
-            <input type="number" id="actual-a" placeholder="สกอร์ทีม A" min="0">
-            <input type="number" id="actual-b" placeholder="สกอร์ทีม B" min="0">
-            <input type="text" id="actual-winner" placeholder="ทีมชนะ / ทีมเข้ารอบ เช่น บราซิล">
-            <button onclick="updateScore()" style="width:100%;">บันทึกผลจริง + คำนวณแต้ม</button>
-            <button class="btn-muted" onclick="loadRecentMatches(); loadAdminSummary();" style="width:100%; margin-top:10px;">โหลดรายการผลล่าสุด</button>
-            <div class="small-note">กรณี m-1 ถึง m-16 ระบบจะใส่ชื่อทีมให้อัตโนมัติ</div>
-            <div id="adminResult"></div>
-        </div>
+      <div class="admin-card">
+        <h3 style="color:#58a6ff;margin-top:0;">กรอกผลการแข่งขันจริง</h3>
+        <input type="text" id="match-key" placeholder="match_key เช่น m-1, left-r16-1, final">
+        <input type="number" id="actual-a" placeholder="สกอร์ทีม A" min="0">
+        <input type="number" id="actual-b" placeholder="สกอร์ทีม B" min="0">
+        <input type="text" id="actual-winner" placeholder="ทีมชนะ / ทีมเข้ารอบ เช่น บราซิล">
+        <button onclick="updateScore()" style="width:100%;">บันทึกผลจริง + คำนวณแต้ม</button>
+        <button class="btn-muted" onclick="loadRecentMatches(); loadAdminSummary();" style="width:100%;margin-top:10px;">โหลดรายการผลล่าสุด</button>
+        <div class="small-note">กรณี m-1 ถึง m-16 ระบบจะใส่ชื่อทีมให้อัตโนมัติ</div>
+        <div id="adminResult"></div>
+      </div>
 
-        <div class="leaderboard-card">
-            <h3 style="color:#58a6ff; margin-top:0;">🏅 Leaderboard Top 20</h3>
-            <div class="small-note">อันดับ 1-10 มีสีเด่นสำหรับกลุ่มรางวัล</div>
-            <button class="btn-muted" onclick="loadLeaderboard('adminLeaderboardContent', false)" style="margin-top:8px;">รีเฟรชตารางคะแนน</button>
-            <div id="adminLeaderboardContent"></div>
-        </div>
+      <div class="leaderboard-card">
+        <h3 style="color:#58a6ff;margin-top:0;">🏆 Leaderboard Top 20</h3>
+        <div class="small-note">แสดง username + ชื่อย่อ / อันดับ 1-10 คือ Prize Zone</div>
+        <button class="btn-muted" onclick="loadLeaderboard('adminLeaderboardContent', false)" style="margin-top:8px;">รีเฟรชตารางคะแนน</button>
+        <div id="adminLeaderboardContent"></div>
+      </div>
     </div>
+  </main>
 
-    <script src="supabase-config.js?v=v6-ui-upgrade-1"></script>
-    <script src="app.js?v=v6-ui-upgrade-1"></script>
-    <script src="calculate.js?v=v6-ui-upgrade-1"></script>
-    <script>
-        const ADMIN_PIN = '556677';
+  <script src="supabase-config.js?v=v9-ultimate-1"></script>
+  <script src="app.js?v=v9-ultimate-1"></script>
+  <script src="calculate.js?v=v9-ultimate-1"></script>
+  <script>
+    const ADMIN_PIN = '556677';
 
-        const ADMIN_MATCH_TEAMS = {
-            'm-1': ['บราซิล', 'อังกฤษ'],
-            'm-2': ['ฝรั่งเศส', 'อาร์เจนตินา'],
-            'm-3': ['สเปน', 'เยอรมนี'],
-            'm-4': ['โปรตุเกส', 'อิตาลี'],
-            'm-5': ['เนเธอร์แลนด์', 'โครเอเชีย'],
-            'm-6': ['เบลเยียม', 'โมร็อกโก'],
-            'm-7': ['ญี่ปุ่น', 'เกาหลีใต้'],
-            'm-8': ['อุรุกวัย', 'เซเนกัล'],
-            'm-9': ['สหรัฐอเมริกา', 'เม็กซิโก'],
-            'm-10': ['สวิตเซอร์แลนด์', 'เดนมาร์ก'],
-            'm-11': ['ออสเตรเลีย', 'ซาอุดีอาระเบีย'],
-            'm-12': ['แคนาดา', 'เอกวาดอร์'],
-            'm-13': ['ตูนิเซีย', 'โปแลนด์'],
-            'm-14': ['ยูเครน', 'เวลส์'],
-            'm-15': ['สวีเดน', 'ออสเตรีย'],
-            'm-16': ['กานา', 'แคเมอรูน']
-        };
+    const ADMIN_MATCH_TEAMS = {
+      'm-1':['บราซิล','อังกฤษ'], 'm-2':['ฝรั่งเศส','อาร์เจนตินา'],
+      'm-3':['สเปน','เยอรมนี'], 'm-4':['โปรตุเกส','อิตาลี'],
+      'm-5':['เนเธอร์แลนด์','โครเอเชีย'], 'm-6':['เบลเยียม','โมร็อกโก'],
+      'm-7':['ญี่ปุ่น','เกาหลีใต้'], 'm-8':['อุรุกวัย','เซเนกัล'],
+      'm-9':['สหรัฐอเมริกา','เม็กซิโก'], 'm-10':['สวิตเซอร์แลนด์','เดนมาร์ก'],
+      'm-11':['ออสเตรเลีย','ซาอุดีอาระเบีย'], 'm-12':['แคนาดา','เอกวาดอร์'],
+      'm-13':['ตูนิเซีย','โปแลนด์'], 'm-14':['ยูเครน','เวลส์'],
+      'm-15':['สวีเดน','ออสเตรีย'], 'm-16':['กานา','แคเมอรูน']
+    };
 
-        function unlockAdmin() {
-            if (document.getElementById('adminPin').value !== ADMIN_PIN) {
-                alert('รหัสแอดมินไม่ถูกต้อง');
-                return;
-            }
-            document.getElementById('adminLogin').style.display = 'none';
-            document.getElementById('adminSummary').style.display = 'grid';
-            document.getElementById('adminPanel').style.display = 'grid';
-            loadRecentMatches();
-            loadLeaderboard('adminLeaderboardContent', false);
-            loadAdminSummary();
+    function unlockAdmin(){
+      if(document.getElementById('adminPin').value !== ADMIN_PIN){
+        alert('รหัสแอดมินไม่ถูกต้อง');
+        return;
+      }
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminSummary').style.display = 'grid';
+      document.getElementById('adminPanel').style.display = 'grid';
+      loadRecentMatches();
+      loadLeaderboard('adminLeaderboardContent', false);
+      loadAdminSummary();
+    }
+
+    async function updateScore(){
+      const matchKey = document.getElementById('match-key').value.trim();
+      const scoreA = document.getElementById('actual-a').value;
+      const scoreB = document.getElementById('actual-b').value;
+      const actualWinner = document.getElementById('actual-winner').value.trim();
+
+      if(!matchKey || scoreA === '' || scoreB === '' || !actualWinner){
+        alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+        return;
+      }
+
+      const { data: oldMatch, error: readError } = await supabaseClient
+        .from('matches')
+        .select('id, match_key, team_a, team_b')
+        .eq('match_key', matchKey)
+        .maybeSingle();
+
+      if(readError){
+        alert('อ่านข้อมูล match ไม่สำเร็จ: ' + readError.message);
+        return;
+      }
+
+      const knownTeams = ADMIN_MATCH_TEAMS[matchKey] || ['ทีม A','ทีม B'];
+      const payload = {
+        match_key: matchKey,
+        team_a: oldMatch?.team_a || knownTeams[0],
+        team_b: oldMatch?.team_b || knownTeams[1],
+        actual_score_a: parseInt(scoreA, 10),
+        actual_score_b: parseInt(scoreB, 10),
+        actual_winner: actualWinner,
+        is_finished: true
+      };
+
+      if(oldMatch?.id){
+        const { error } = await supabaseClient.from('matches').update(payload).eq('match_key', matchKey);
+        if(error){
+          console.error('Supabase admin update error:', error);
+          alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
+          return;
         }
-
-        async function updateScore() {
-            const matchKey = document.getElementById('match-key').value.trim();
-            const scoreA = document.getElementById('actual-a').value;
-            const scoreB = document.getElementById('actual-b').value;
-            const actualWinner = document.getElementById('actual-winner').value.trim();
-
-            if (!matchKey || scoreA === '' || scoreB === '' || !actualWinner) {
-                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-                return;
-            }
-
-            const { data: oldMatch, error: readError } = await supabaseClient
-                .from('matches')
-                .select('id, match_key, team_a, team_b')
-                .eq('match_key', matchKey)
-                .maybeSingle();
-
-            if (readError) {
-                alert('อ่านข้อมูล match ไม่สำเร็จ: ' + readError.message);
-                return;
-            }
-
-            const knownTeams = ADMIN_MATCH_TEAMS[matchKey] || ['ทีม A', 'ทีม B'];
-            const payload = {
-                match_key: matchKey,
-                team_a: oldMatch?.team_a || knownTeams[0],
-                team_b: oldMatch?.team_b || knownTeams[1],
-                actual_score_a: parseInt(scoreA, 10),
-                actual_score_b: parseInt(scoreB, 10),
-                actual_winner: actualWinner,
-                is_finished: true
-            };
-
-            if (oldMatch?.id) {
-                const { error } = await supabaseClient
-                    .from('matches')
-                    .update(payload)
-                    .eq('match_key', matchKey);
-
-                if (error) {
-                    console.error('Supabase admin update error:', error);
-                    alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
-                    return;
-                }
-            } else {
-                const idMatch = matchKey.match(/^m-(\\d+)$/);
-                if (idMatch) payload.id = parseInt(idMatch[1], 10);
-
-                const { error } = await supabaseClient
-                    .from('matches')
-                    .insert([payload]);
-
-                if (error) {
-                    console.error('Supabase admin insert error:', error);
-                    alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
-                    return;
-                }
-            }
-
-            await calculateAndSaveScores(matchKey);
-            await loadRecentMatches();
-            await loadLeaderboard('adminLeaderboardContent', false);
-            await loadAdminSummary();
+      }else{
+        const idMatch = matchKey.match(/^m-(\\d+)$/);
+        if(idMatch) payload.id = parseInt(idMatch[1], 10);
+        const { error } = await supabaseClient.from('matches').insert([payload]);
+        if(error){
+          console.error('Supabase admin insert error:', error);
+          alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
+          return;
         }
+      }
 
-        async function loadRecentMatches() {
-            const { data, error } = await supabaseClient
-                .from('matches')
-                .select('id, match_key, team_a, team_b, actual_score_a, actual_score_b, actual_winner, is_finished')
-                .order('id', { ascending: true })
-                .limit(80);
+      await calculateAndSaveScores(matchKey);
+      await loadRecentMatches();
+      await loadLeaderboard('adminLeaderboardContent', false);
+      await loadAdminSummary();
+    }
 
-            if (error) return alert('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
-            document.getElementById('adminResult').innerHTML = `
-                <table class="table">
-                    <thead><tr><th>Match</th><th>ทีม</th><th>ผลจริง</th><th>ผู้ชนะ</th><th>สถานะ</th></tr></thead>
-                    <tbody>${(data || []).map(m => `<tr>
-                        <td>${m.match_key}</td>
-                        <td>${m.team_a || '-'} vs ${m.team_b || '-'}</td>
-                        <td>${m.actual_score_a ?? '-'}-${m.actual_score_b ?? '-'}</td>
-                        <td>${m.actual_winner || '-'}</td>
-                        <td><span class="status-badge ${m.is_finished ? 'status-done' : 'status-wait'}">${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</span></td>
-                    </tr>`).join('')}</tbody>
-                </table>`;
-        }
-    </script>
+    async function loadRecentMatches(){
+      const { data, error } = await supabaseClient
+        .from('matches')
+        .select('id, match_key, team_a, team_b, actual_score_a, actual_score_b, actual_winner, is_finished')
+        .order('id', { ascending:true })
+        .limit(80);
+
+      if(error) return alert('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
+      document.getElementById('adminResult').innerHTML = `
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Match</th><th>ทีม</th><th>ผลจริง</th><th>ผู้ชนะ</th><th>สถานะ</th></tr></thead>
+            <tbody>${(data || []).map(m => `<tr>
+              <td>${m.match_key}</td>
+              <td>${m.team_a || '-'} vs ${m.team_b || '-'}</td>
+              <td>${m.actual_score_a ?? '-'}-${m.actual_score_b ?? '-'}</td>
+              <td>${m.actual_winner || '-'}</td>
+              <td><span class="status-badge ${m.is_finished ? 'status-done' : 'status-wait'}">${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</span></td>
+            </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+    }
+  </script>
 </body>
 </html>
