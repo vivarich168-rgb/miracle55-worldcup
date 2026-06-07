@@ -1,48 +1,98 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Miracle55 Worldcup</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-    <script src="calculate.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input type="number" id="match-id" placeholder="เลข ID คู่บอล">
-    <input type="number" id="actual-a" placeholder="สกอร์ A">
-    <input type="number" id="actual-b" placeholder="สกอร์ B">
-    <button onclick="updateScore()">บันทึกผลการแข่งขัน</button>
+    <div class="header-zone">
+        <h1>🛠 Admin Miracle55 Worldcup</h1>
+        <p class="sub-title">บันทึกผลจริง และคำนวณแต้มแบบกันบวกซ้ำ</p>
+    </div>
 
+    <div id="adminLogin" class="admin-card">
+        <h3 style="color:#58a6ff; margin-top:0;">เข้าสู่หน้าแอดมิน</h3>
+        <input type="password" id="adminPin" placeholder="ใส่รหัสแอดมิน">
+        <button onclick="unlockAdmin()" style="width:100%;">เข้าสู่ระบบแอดมิน</button>
+        <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น ความปลอดภัยจริงควรใช้ Supabase Auth + RLS Policy</p>
+    </div>
+
+    <div id="adminPanel" class="admin-card" style="display:none;">
+        <h3 style="color:#58a6ff; margin-top:0;">กรอกผลการแข่งขันจริง</h3>
+        <input type="text" id="match-key" placeholder="match_key เช่น m-1, left-r16-1, final">
+        <input type="number" id="actual-a" placeholder="สกอร์ทีม A" min="0">
+        <input type="number" id="actual-b" placeholder="สกอร์ทีม B" min="0">
+        <input type="text" id="actual-winner" placeholder="ทีมชนะ / ทีมเข้ารอบ เช่น บราซิล">
+        <button onclick="updateScore()" style="width:100%;">บันทึกผลจริง + คำนวณแต้ม</button>
+        <button class="btn-muted" onclick="loadRecentMatches()" style="width:100%; margin-top:10px;">โหลดรายการผลล่าสุด</button>
+        <div id="adminResult"></div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="calculate.js"></script>
     <script>
-    async function updateScore() {
-        const matchId = document.getElementById('match-id').value;
-        const scoreA = document.getElementById('actual-a').value;
-        const scoreB = document.getElementById('actual-b').value;
+        // เปลี่ยนรหัสนี้เองก่อนใช้งานจริง
+        const ADMIN_PIN = '556677';
 
-        if (!matchId || !scoreA || !scoreB) {
-            alert("กรุณากรอกข้อมูลให้ครบทุกช่อง!");
-            return;
-        }
-
-        const { data, error } = await supabaseClient
-            .from('matches')
-            .update({ 
-                actual_score_a: parseInt(scoreA), 
-                actual_score_b: parseInt(scoreB),
-                is_finished: true 
-            })
-            .eq('id', parseInt(matchId));
-
-        if (error) {
-            alert('เกิดข้อผิดพลาดจาก Supabase: ' + error.message);
-        } else {
-            alert('🎉 อัปเดตผลสำเร็จ! กำลังคำนวณแต้ม...');
-            // ตรวจสอบว่าฟังก์ชันใน calculate.js พร้อมใช้งานไหม
-            if (typeof calculateAndSaveScores === 'function') {
-                await calculateAndSaveScores(matchId);
-            } else {
-                console.error("ฟังก์ชัน calculateAndSaveScores ไม่พบในไฟล์ calculate.js");
+        function unlockAdmin() {
+            if (document.getElementById('adminPin').value !== ADMIN_PIN) {
+                alert('รหัสแอดมินไม่ถูกต้อง');
+                return;
             }
+            document.getElementById('adminLogin').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
         }
-    }
+
+        async function updateScore() {
+            const matchKey = document.getElementById('match-key').value.trim();
+            const scoreA = document.getElementById('actual-a').value;
+            const scoreB = document.getElementById('actual-b').value;
+            const actualWinner = document.getElementById('actual-winner').value.trim();
+
+            if (!matchKey || scoreA === '' || scoreB === '' || !actualWinner) {
+                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return;
+            }
+
+            const payload = {
+                match_key: matchKey,
+                actual_score_a: parseInt(scoreA, 10),
+                actual_score_b: parseInt(scoreB, 10),
+                actual_winner: actualWinner,
+                is_finished: true,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabaseClient
+                .from('matches')
+                .upsert([payload], { onConflict: 'match_key' });
+
+            if (error) {
+                alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
+                return;
+            }
+
+            await calculateAndSaveScores(matchKey);
+            loadRecentMatches();
+        }
+
+        async function loadRecentMatches() {
+            const { data, error } = await supabaseClient
+                .from('matches')
+                .select('match_key, actual_score_a, actual_score_b, actual_winner, is_finished, updated_at')
+                .order('updated_at', { ascending: false })
+                .limit(20);
+
+            if (error) return alert('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
+            document.getElementById('adminResult').innerHTML = `
+                <table class="table">
+                    <thead><tr><th>Match</th><th>ผลจริง</th><th>ผู้ชนะ</th><th>สถานะ</th></tr></thead>
+                    <tbody>${data.map(m => `<tr><td>${m.match_key}</td><td>${m.actual_score_a}-${m.actual_score_b}</td><td>${m.actual_winner || '-'}</td><td>${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</td></tr>`).join('')}</tbody>
+                </table>`;
+        }
     </script>
 </body>
 </html>

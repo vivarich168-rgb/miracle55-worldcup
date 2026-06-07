@@ -1,67 +1,78 @@
-async function calculateAndSaveScores(matchId) {
-console.log("โหลดไฟล์คำนวณสำเร็จ!");    
-console.log("เริ่มคำนวณแต้มให้คู่ที่:", matchId);
-    
-    // 1. ดึงผลจริง
-    const { data: match } = await supabaseClient
+// คำนวณแต้มแบบกันบวกซ้ำ
+// ใช้คู่กับตาราง predictions ที่มีคอลัมน์ points_awarded และ match_key
+async function calculateAndSaveScores(matchKey) {
+    console.log('เริ่มคำนวณแต้ม:', matchKey);
+
+    const { data: match, error: matchError } = await supabaseClient
         .from('matches')
-        .select('actual_score_a, actual_score_b')
-        .eq('id', parseInt(matchId))
+        .select('match_key, actual_score_a, actual_score_b, actual_winner, is_finished')
+        .eq('match_key', matchKey)
         .single();
 
-    if (!match) {
-        console.error("ไม่พบข้อมูลผลการแข่งขันจริงของคู่ที่:", matchId);
+    if (matchError || !match) {
+        console.error('ไม่พบข้อมูลผลการแข่งขันจริง:', matchError);
+        alert('ไม่พบ match_key นี้ในตาราง matches');
+        return;
+    }
+    if (!match.is_finished) {
+        alert('คู่นี้ยังไม่ได้ตั้งสถานะจบการแข่งขัน');
         return;
     }
 
-    // 2. ดึงข้อมูลการทายผลทั้งหมด
     const { data: predictions, error: predError } = await supabaseClient
         .from('predictions')
         .select('*')
-        .eq('match_id', parseInt(matchId));
+        .eq('match_key', matchKey);
 
     if (predError) {
-        console.error("ดึงข้อมูลการทายผลไม่สำเร็จ:", predError);
+        console.error('ดึงข้อมูลการทายผลไม่สำเร็จ:', predError);
+        alert('ดึงข้อมูลการทายผลไม่สำเร็จ: ' + predError.message);
         return;
     }
-    
-    console.log("พบรายการทายผล:", predictions);
 
-    // 3. ลูปคำนวณและอัปเดต (ถ้าไฟล์เดิมไม่มีลูปนี้ ก็วางทับลงไปได้เลยครับ)
-    for (let p of predictions) {
-        let points = 0;
-        
-        // เปรียบเทียบผล
-        if (parseInt(p.pred_a) === match.actual_score_a && parseInt(p.pred_b) === match.actual_score_b) {
-            points = 3000;
-        } else if ((p.pred_a > p.pred_b && match.actual_score_a > match.actual_score_b) || 
-                   (p.pred_a < p.pred_b && match.actual_score_a < match.actual_score_b) || 
-                   (p.pred_a === p.pred_b && match.actual_score_a === match.actual_score_b)) {
-            points = 1000;
+    let updatedCount = 0;
+    for (const p of predictions) {
+        const oldPoints = p.points_awarded || 0;
+        let newPoints = 0;
+
+        const exactScore = Number(p.pred_a) === Number(match.actual_score_a) && Number(p.pred_b) === Number(match.actual_score_b);
+        const correctWinner = p.predicted_winner && match.actual_winner && p.predicted_winner === match.actual_winner;
+
+        if (exactScore) newPoints = 3000;
+        else if (correctWinner) newPoints = 1000;
+
+        const diff = newPoints - oldPoints;
+        if (diff === 0) continue;
+
+        const { data: user, error: userError } = await supabaseClient
+            .from('users')
+            .select('total_points')
+            .eq('id', p.user_id)
+            .single();
+
+        if (userError || !user) {
+            console.warn('หา User ไม่เจอ:', p.user_id, userError);
+            continue;
         }
 
-        if (points > 0) {
-            const { data: user, error: userError } = await supabaseClient
-                .from('users')
-                .select('total_points')
-                .eq('id', p.user_id)
-                .single();
+        const { error: updateUserError } = await supabaseClient
+            .from('users')
+            .update({ total_points: (user.total_points || 0) + diff })
+            .eq('id', p.user_id);
 
-            if (userError || !user) {
-                console.warn("หา User ID:", p.user_id, "ในตาราง users ไม่เจอ!");
-                continue;
-            }
-
-            const { error: updateError } = await supabaseClient
-                .from('users')
-                .update({ total_points: (user.total_points || 0) + points })
-                .eq('id', p.user_id);
-                
-            if (updateError) {
-                console.error("อัปเดตแต้มไม่สำเร็จสำหรับ ID:", p.user_id, updateError);
-            } else {
-                console.log("บวกแต้มสำเร็จให้ ID:", p.user_id, "จำนวน:", points);
-            }
+        if (updateUserError) {
+            console.error('อัปเดตแต้ม user ไม่สำเร็จ:', updateUserError);
+            continue;
         }
+
+        const { error: updatePredError } = await supabaseClient
+            .from('predictions')
+            .update({ points_awarded: newPoints, scored_at: new Date().toISOString() })
+            .eq('id', p.id);
+
+        if (updatePredError) console.error('อัปเดต prediction ไม่สำเร็จ:', updatePredError);
+        else updatedCount++;
     }
+
+    alert(`คำนวณแต้มสำเร็จ อัปเดต ${updatedCount} รายการ`);
 }
