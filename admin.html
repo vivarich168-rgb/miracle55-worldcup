@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Miracle55 Worldcup</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=20260607-clean-final-1">
+    <link rel="stylesheet" href="style.css?v=top20-final-1">
 </head>
 <body>
     <div class="header-zone">
@@ -17,54 +17,48 @@
         <h3 style="color:#58a6ff; margin-top:0;">เข้าสู่หน้าแอดมิน</h3>
         <input type="password" id="adminPin" placeholder="ใส่รหัสแอดมิน">
         <button onclick="unlockAdmin()" style="width:100%;">เข้าสู่ระบบแอดมิน</button>
-        <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น เหมาะสำหรับทดสอบก่อนใช้งานจริง</p>
+        <p class="warning">* รหัสนี้เป็นกันคนทั่วไปเบื้องต้น ถ้าใช้งานเงินจริงควรเพิ่มระบบ Auth ภายหลัง</p>
     </div>
 
-    <div id="adminPanel" class="admin-card" style="display:none;">
-        <h3 style="color:#58a6ff; margin-top:0;">กรอกผลการแข่งขันจริง</h3>
-        <input type="text" id="match-key" placeholder="match_key เช่น m-1, left-r16-1, final">
-        <input type="number" id="actual-a" placeholder="สกอร์ทีม A" min="0">
-        <input type="number" id="actual-b" placeholder="สกอร์ทีม B" min="0">
-        <input type="text" id="actual-winner" placeholder="ทีมชนะ / ทีมเข้ารอบ เช่น บราซิล">
-        <button onclick="updateScore()" style="width:100%;">บันทึกผลจริง + คำนวณแต้ม</button>
-        <button class="btn-muted" onclick="loadRecentMatches()" style="width:100%; margin-top:10px;">โหลดรายการผลล่าสุด</button>
-        <p class="warning">ถ้ากรอก m-1 ถึง m-16 ระบบจะอัปเดตแถวเดิมในตาราง matches ไม่สร้างซ้ำ</p>
-        <div id="adminResult"></div>
+    <div id="adminPanel" class="admin-grid" style="display:none;">
+        <div class="admin-card">
+            <h3 style="color:#58a6ff; margin-top:0;">กรอกผลการแข่งขันจริง</h3>
+            <input type="text" id="match-key" placeholder="match_key เช่น m-1, left-r16-1, final">
+            <input type="number" id="actual-a" placeholder="สกอร์ทีม A" min="0">
+            <input type="number" id="actual-b" placeholder="สกอร์ทีม B" min="0">
+            <input type="text" id="actual-winner" placeholder="ทีมชนะ / ทีมเข้ารอบ เช่น บราซิล">
+            <button onclick="updateScore()" style="width:100%;">บันทึกผลจริง + คำนวณแต้ม</button>
+            <button class="btn-muted" onclick="loadRecentMatches()" style="width:100%; margin-top:10px;">โหลดรายการผลล่าสุด</button>
+            <p class="warning">ถ้ากรอก m-1 ถึง m-16 ระบบจะใช้ชื่อทีมจากตาราง matches เดิม</p>
+            <div id="adminResult"></div>
+        </div>
+
+        <div class="leaderboard-card admin-leaderboard" id="adminLeaderboardCard">
+            <h3 style="color:#58a6ff; margin-top:0;">🏅 ตารางคะแนน Top 20</h3>
+            <p class="warning">อันดับ 1-10 ทำสีเด่นตามเกณฑ์รางวัล</p>
+            <div id="adminLeaderboardContent"></div>
+            <button class="btn-muted" onclick="loadAdminLeaderboard()" style="width:100%; margin-top:10px;">รีเฟรชตารางคะแนน</button>
+        </div>
     </div>
 
-    <script src="supabase-config.js?v=20260607-clean-final-1"></script>
-    <script src="calculate.js?v=20260607-clean-final-1"></script>
+    <script src="supabase-config.js?v=top20-final-1"></script>
+    <script src="calculate.js?v=top20-final-1"></script>
     <script>
         const ADMIN_PIN = '556677';
-
+        function esc(s) { return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
         function unlockAdmin() {
-            if (document.getElementById('adminPin').value !== ADMIN_PIN) {
-                alert('รหัสแอดมินไม่ถูกต้อง');
-                return;
-            }
+            if (document.getElementById('adminPin').value !== ADMIN_PIN) return alert('รหัสแอดมินไม่ถูกต้อง');
             document.getElementById('adminLogin').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'grid';
             loadRecentMatches();
+            loadAdminLeaderboard();
         }
-
-        function showAdminError(title, error) {
-            console.error(title, error);
-            const msg = error && error.message ? error.message : JSON.stringify(error || {});
-            document.getElementById('adminResult').innerHTML = `<p class="warning">${title}: ${msg}</p>`;
-            alert(title + ': ' + msg + '\n\nถ้ายังเจอปัญหา ให้รันไฟล์ 00_RUN_THIS_SQL_FIRST.sql ใน Supabase อีกครั้ง แล้วรอ 30 วินาที');
-        }
-
         async function updateScore() {
             const matchKey = document.getElementById('match-key').value.trim();
             const scoreA = document.getElementById('actual-a').value;
             const scoreB = document.getElementById('actual-b').value;
             const actualWinner = document.getElementById('actual-winner').value.trim();
-
-            if (!matchKey || scoreA === '' || scoreB === '' || !actualWinner) {
-                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-                return;
-            }
-
+            if (!matchKey || scoreA === '' || scoreB === '' || !actualWinner) return alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
             const payload = {
                 match_key: matchKey,
                 actual_score_a: parseInt(scoreA, 10),
@@ -72,42 +66,36 @@
                 actual_winner: actualWinner,
                 is_finished: true
             };
-
-            // อัปเดตแถวเดิมก่อน ป้องกันการสร้าง match m-1 ถึง m-16 ซ้ำ
-            const updateRes = await supabaseClient
-                .from('matches')
-                .update(payload)
-                .eq('match_key', matchKey)
-                .select('id, match_key');
-
-            if (updateRes.error) return showAdminError('บันทึกผลจริงไม่สำเร็จ', updateRes.error);
-
-            // ถ้าไม่มีแถวเดิม เช่น รอบ final / third / รอบลึกที่ยังไม่มีใน table ให้ insert ใหม่
-            if (!updateRes.data || updateRes.data.length === 0) {
-                const insertRes = await supabaseClient
-                    .from('matches')
-                    .insert([payload])
-                    .select('id, match_key');
-                if (insertRes.error) return showAdminError('สร้าง match ใหม่ไม่สำเร็จ', insertRes.error);
+            const { error } = await supabaseClient.from('matches').upsert([payload], { onConflict: 'match_key' });
+            if (error) {
+                console.error('Supabase admin upsert error:', error);
+                alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message + '\n\nให้รัน 00_RUN_THIS_SQL_FIRST.sql ล่าสุดใน Supabase ก่อน');
+                return;
             }
-
             await calculateAndSaveScores(matchKey);
-            await loadRecentMatches();
+            loadRecentMatches();
+            loadAdminLeaderboard();
         }
-
         async function loadRecentMatches() {
             const { data, error } = await supabaseClient
                 .from('matches')
-                .select('match_key, team_a, team_b, actual_score_a, actual_score_b, actual_winner, is_finished, created_at')
-                .order('match_key', { ascending: true })
+                .select('id, match_key, team_a, team_b, actual_score_a, actual_score_b, actual_winner, is_finished')
+                .order('id', { ascending: true })
                 .limit(80);
-
-            if (error) return showAdminError('โหลดรายการผลล่าสุดไม่สำเร็จ', error);
-
+            if (error) return alert('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
             document.getElementById('adminResult').innerHTML = `
                 <table class="table">
                     <thead><tr><th>Match</th><th>ทีม</th><th>ผลจริง</th><th>ผู้ชนะ</th><th>สถานะ</th></tr></thead>
-                    <tbody>${(data || []).map(m => `<tr><td>${m.match_key || '-'}</td><td>${m.team_a || '-'} vs ${m.team_b || '-'}</td><td>${m.actual_score_a ?? '-'}-${m.actual_score_b ?? '-'}</td><td>${m.actual_winner || '-'}</td><td>${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</td></tr>`).join('')}</tbody>
+                    <tbody>${(data || []).map(m => `<tr><td>${esc(m.match_key)}</td><td>${esc(m.team_a || '')} vs ${esc(m.team_b || '')}</td><td>${m.actual_score_a ?? '---'}-${m.actual_score_b ?? '---'}</td><td>${esc(m.actual_winner || '-')}</td><td>${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</td></tr>`).join('')}</tbody>
+                </table>`;
+        }
+        async function loadAdminLeaderboard() {
+            const { data, error } = await supabaseClient.from('users').select('username, full_name, total_points').order('total_points', { ascending: false }).limit(20);
+            if (error) return alert('โหลดตารางคะแนนไม่สำเร็จ: ' + error.message);
+            document.getElementById('adminLeaderboardContent').innerHTML = `
+                <table class="table leaderboard-table">
+                    <thead><tr><th>อันดับ</th><th>ผู้เล่น</th><th>คะแนน</th></tr></thead>
+                    <tbody>${(data || []).map((u,i)=>{ const rank=i+1; return `<tr class="rank-row rank-${rank<=10?rank:'normal'}"><td><span class="rank-badge">${rank}</span></td><td>${esc(u.full_name || u.username)}</td><td>${u.total_points || 0}</td></tr>`; }).join('')}</tbody>
                 </table>`;
         }
     </script>

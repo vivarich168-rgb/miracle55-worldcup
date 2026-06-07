@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Miracle55 - FIFA Worldcup 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=20260607-4">
+    <link rel="stylesheet" href="style.css?v=top20-final-1">
 </head>
 <body>
     <div class="header-zone">
@@ -18,7 +18,7 @@
         <input type="text" id="username" placeholder="Username เช่น marke123">
         <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง สำหรับติดต่อรับรางวัล">
         <button style="width:100%;" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เปิดตารางทายผล</button>
-        <p class="warning">* เวอร์ชันนี้แก้กันกดส่งซ้ำ, เก็บทายผลได้ทุกรอบ และรองรับกรณีสกอร์เสมอให้เลือกทีมเข้ารอบ</p>
+        <p class="warning">* เวอร์ชันนี้กันกดส่งซ้ำ, เก็บทายผลได้ทุกรอบ และกรณีเสมอให้เลือกทีมเข้ารอบ</p>
     </div>
 
     <div id="loginStatus" class="status-ok"></div>
@@ -38,7 +38,7 @@
             <div id="finalBlock"></div>
             <div id="thirdBlock"></div>
             <button class="btn-submit-all" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
-            <button class="btn-muted" onclick="loadLeaderboard()">ดูอันดับคะแนน</button>
+            <button class="btn-muted" onclick="loadLeaderboard()">ดูอันดับคะแนน Top 20</button>
         </div>
 
         <div class="bracket-column" id="col-r4-right"></div>
@@ -47,12 +47,13 @@
         <div class="bracket-column" id="col-r32-right"></div>
     </div>
 
-    <div class="leaderboard-card" id="leaderboardCard" style="display:none; max-width:760px;">
-        <h3 style="color:#58a6ff; margin-top:0;">🏅 ตารางคะแนน</h3>
+    <div class="leaderboard-card" id="leaderboardCard" style="display:none; max-width:820px;">
+        <h3 style="color:#58a6ff; margin-top:0;">🏅 ตารางคะแนน Top 20</h3>
+        <p class="warning">อันดับ 1-10 มีสีแยกตามเกณฑ์รางวัล</p>
         <div id="leaderboardContent"></div>
     </div>
 
-    <script src="supabase-config.js?v=20260607-4"></script>
-    <script src="app.js?v=20260607-4"></script>
+    <script src="supabase-config.js?v=top20-final-1"></script>
+    <script src="app.js?v=top20-final-1"></script>
 </body>
 </html>

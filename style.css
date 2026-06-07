@@ -10,7 +10,6 @@
     --orange: #f0883e;
     --red: #f85149;
 }
-
 * { box-sizing: border-box; }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,7 +21,6 @@ body {
 .header-zone { text-align: center; margin-bottom: 20px; }
 h1 { color: var(--blue); text-shadow: 0 0 10px rgba(88,166,255,0.3); margin-bottom: 6px; }
 .sub-title { color: var(--muted); margin-top: 0; }
-
 .login-card, .mini-card, .admin-card, .leaderboard-card {
     max-width: 520px;
     margin: 0 auto 18px auto;
@@ -32,6 +30,15 @@ h1 { color: var(--blue); text-shadow: 0 0 10px rgba(88,166,255,0.3); margin-bott
     border: 1px solid var(--border);
     box-shadow: 0 6px 20px rgba(0,0,0,.28);
 }
+.admin-grid {
+    max-width: 1250px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 430px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+.admin-grid .admin-card, .admin-grid .leaderboard-card { max-width: none; width: 100%; }
 input, select {
     width: 100%;
     padding: 10px;
@@ -62,7 +69,6 @@ button:hover { filter: brightness(1.12); transform: translateY(-1px); }
 }
 .btn-danger { background: var(--red); }
 .btn-muted { background: #30363d; }
-
 .bracket-wrapper {
     display: flex;
     justify-content: space-between;
@@ -117,13 +123,47 @@ button:hover { filter: brightness(1.12); transform: translateY(-1px); }
 .tie-box select { margin-bottom:0; padding:6px; font-size:12px; }
 .status-ok { text-align:center; color:var(--green); font-weight:800; margin-bottom:16px; display:none; }
 .warning { color: var(--orange); font-size: 12px; line-height: 1.5; }
-.table { width:100%; border-collapse: collapse; margin-top: 10px; }
+.table { width:100%; border-collapse: collapse; margin-top: 10px; overflow: hidden; border-radius: 10px; }
 .table th, .table td { border-bottom:1px solid var(--border); padding:8px; text-align:left; font-size:13px; }
-.table th { color: var(--blue); }
-
+.table th { color: var(--blue); background: rgba(13,17,23,.55); }
+.leaderboard-table td { font-weight: 800; }
+.rank-badge {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:32px;
+    height:26px;
+    padding:0 8px;
+    border-radius:8px;
+    background: rgba(255,255,255,.1);
+    color:#fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.rank-row.rank-1 { background: linear-gradient(90deg, rgba(255,193,7,.55), rgba(255,193,7,.14)); color:#fff9db; }
+.rank-row.rank-2 { background: linear-gradient(90deg, rgba(192,192,192,.45), rgba(192,192,192,.12)); color:#f4f7fb; }
+.rank-row.rank-3 { background: linear-gradient(90deg, rgba(205,127,50,.50), rgba(205,127,50,.12)); color:#ffe9d2; }
+.rank-row.rank-4 { background: linear-gradient(90deg, rgba(0,188,212,.42), rgba(0,188,212,.10)); color:#d9fbff; }
+.rank-row.rank-5 { background: linear-gradient(90deg, rgba(46,160,67,.42), rgba(46,160,67,.10)); color:#dcffe4; }
+.rank-row.rank-6 { background: linear-gradient(90deg, rgba(31,111,235,.44), rgba(31,111,235,.10)); color:#ddebff; }
+.rank-row.rank-7 { background: linear-gradient(90deg, rgba(63,81,181,.45), rgba(63,81,181,.10)); color:#e1e5ff; }
+.rank-row.rank-8 { background: linear-gradient(90deg, rgba(156,39,176,.45), rgba(156,39,176,.10)); color:#f8ddff; }
+.rank-row.rank-9 { background: linear-gradient(90deg, rgba(233,30,99,.42), rgba(233,30,99,.10)); color:#ffe0ec; }
+.rank-row.rank-10 { background: linear-gradient(90deg, rgba(244,67,54,.42), rgba(244,67,54,.10)); color:#ffe1df; }
+.rank-row.rank-normal { background: rgba(13,17,23,.25); }
+.rank-1 .rank-badge { background:#d89b00; }
+.rank-2 .rank-badge { background:#7d8792; }
+.rank-3 .rank-badge { background:#a65f22; }
+.rank-4 .rank-badge { background:#0097a7; }
+.rank-5 .rank-badge { background:#188038; }
+.rank-6 .rank-badge { background:#1f6feb; }
+.rank-7 .rank-badge { background:#3949ab; }
+.rank-8 .rank-badge { background:#8e24aa; }
+.rank-9 .rank-badge { background:#c2185b; }
+.rank-10 .rank-badge { background:#c62828; }
 @media (max-width: 900px) {
     body { padding: 10px; }
     h1 { font-size: 22px; }
     .bracket-column { min-height: 860px; width: 190px; flex-basis: 190px; }
     .center-column { width: 230px; flex-basis: 230px; }
+    .admin-grid { grid-template-columns: 1fr; }
 }

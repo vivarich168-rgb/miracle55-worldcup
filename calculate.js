@@ -1,5 +1,4 @@
 // คำนวณแต้มแบบกันบวกซ้ำ
-// ใช้คู่กับตาราง predictions ที่มีคอลัมน์ points_awarded และ match_key
 async function calculateAndSaveScores(matchKey) {
     console.log('เริ่มคำนวณแต้ม:', matchKey);
 
@@ -31,13 +30,12 @@ async function calculateAndSaveScores(matchKey) {
     }
 
     let updatedCount = 0;
-    for (const p of predictions) {
+    for (const p of (predictions || [])) {
         const oldPoints = p.points_awarded || 0;
         let newPoints = 0;
 
         const exactScore = Number(p.pred_a) === Number(match.actual_score_a) && Number(p.pred_b) === Number(match.actual_score_b);
-        const actualWinner = match.actual_winner || null;
-        const correctWinner = p.predicted_winner && actualWinner && p.predicted_winner === actualWinner;
+        const correctWinner = p.predicted_winner && match.actual_winner && p.predicted_winner === match.actual_winner;
 
         if (exactScore) newPoints = 3000;
         else if (correctWinner) newPoints = 1000;
@@ -50,30 +48,19 @@ async function calculateAndSaveScores(matchKey) {
             .select('total_points')
             .eq('id', p.user_id)
             .single();
-
-        if (userError || !user) {
-            console.warn('หา User ไม่เจอ:', p.user_id, userError);
-            continue;
-        }
+        if (userError || !user) continue;
 
         const { error: updateUserError } = await supabaseClient
             .from('users')
             .update({ total_points: (user.total_points || 0) + diff })
             .eq('id', p.user_id);
-
-        if (updateUserError) {
-            console.error('อัปเดตแต้ม user ไม่สำเร็จ:', updateUserError);
-            continue;
-        }
+        if (updateUserError) continue;
 
         const { error: updatePredError } = await supabaseClient
             .from('predictions')
             .update({ points_awarded: newPoints, scored_at: new Date().toISOString() })
             .eq('id', p.id);
-
-        if (updatePredError) console.error('อัปเดต prediction ไม่สำเร็จ:', updatePredError);
-        else updatedCount++;
+        if (!updatePredError) updatedCount++;
     }
-
     alert(`คำนวณแต้มสำเร็จ อัปเดต ${updatedCount} รายการ`);
 }

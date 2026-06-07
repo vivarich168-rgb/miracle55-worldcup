@@ -1,14 +1,20 @@
-Miracle55 Worldcup - CLEAN FINAL
+Miracle55 Worldcup - Clean Final Top20
 
-ทำตามนี้ทีละข้อเท่านั้นครับ
+สิ่งที่แก้รวมในชุดนี้:
+1) แก้ repo/link ให้ใช้ miracle55-worldcup
+2) แก้ schema matches/predictions/users ให้มี column ที่โค้ดใช้ครบ
+3) เพิ่ม match_key และ unique index กันส่งซ้ำ user_id + match_key
+4) ลบ duplicate predictions โดยเก็บรายการล่าสุด
+5) reload schema cache ของ Supabase
+6) Leaderboard แสดงแค่ Top 20
+7) อันดับ 1-10 มีสีแยกชัดเจนตามเกณฑ์รางวัล
+8) หน้า admin มี Leaderboard Top 20 ด้านขวา
 
-1) แตก ZIP นี้
-
-2) เข้า GitHub repo ที่ถูกต้อง:
-   miracle55-worldcup
-
-3) อัปโหลดไฟล์ทั้งหมดใน ZIP นี้ไปไว้หน้าแรกของ repo เท่านั้น ห้ามซ้อนโฟลเดอร์
-   ไฟล์ที่ต้องเห็นใน repo:
+วิธีติดตั้ง:
+1) แตก ZIP
+2) อัปโหลดไฟล์ทั้งหมดใน ZIP ไปที่ root repository ของ GitHub:
+   https://github.com/vivarich168-rgb/miracle55-worldcup
+   ต้องเห็นไฟล์เหล่านี้หน้าแรก repo:
    - index.html
    - admin.html
    - app.js
@@ -18,32 +24,18 @@ Miracle55 Worldcup - CLEAN FINAL
    - 00_RUN_THIS_SQL_FIRST.sql
    - README_UPLOAD.txt
 
-4) เข้า Supabase > SQL Editor > New query
-   เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad
-   กด Ctrl+A > Ctrl+C
-   กลับไป SQL Editor > Ctrl+V > Run
-   รอ 30 วินาที
+3) เข้า Supabase > SQL Editor
+4) เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad
+5) Ctrl+A, Ctrl+C แล้ววางใน SQL Editor
+6) กด Run 1 ครั้ง
+7) รอ 30 วินาที
+8) เปิดเว็บ:
+   https://vivarich168-rgb.github.io/miracle55-worldcup/?v=top20-final-1
 
-5) เปิดเว็บผู้เล่น:
-   https://vivarich168-rgb.github.io/miracle55-worldcup/?v=clean-final-1
+หน้าแอดมิน:
+https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=top20-final-1
+รหัสแอดมิน: 556677
 
-6) เปิดหน้าแอดมิน:
-   https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=clean-final-1
-
-7) รหัสแอดมินเบื้องต้น:
-   556677
-
-8) วิธีกรอกแอดมิน:
-   match_key รอบแรก: m-1 ถึง m-16
-   ตัวอย่าง:
-   match_key: m-10
-   สกอร์ A: 3
-   สกอร์ B: 1
-   ผู้ชนะ: สวิตเซอร์แลนด์
-
-9) ถ้าเว็บยังแปลก ให้กด Ctrl+F5
-
-หมายเหตุสำคัญ:
-- ชุดนี้ไม่ใช้ service_role key บน GitHub เพราะอันตรายมาก
-- ใช้ anon key + RLS แบบเปิดสำหรับทดสอบ/ใช้งานเว็บ static
-- ถ้าจะใช้กับเงินรางวัลจริง ควรทำระบบแอดมินผ่าน server/backend เพิ่มในอนาคต
+หมายเหตุความปลอดภัย:
+ชุดนี้ใช้ anon key + RLS แบบเปิดเพื่อให้เว็บ static ใช้งานได้ง่าย
+ถ้าใช้เงินจริง/เปิดสาธารณะเต็มรูปแบบ แนะนำเพิ่ม Supabase Auth หรือ Edge Function ภายหลัง
