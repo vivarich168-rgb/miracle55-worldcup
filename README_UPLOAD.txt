@@ -1,27 +1,23 @@
-Miracle55 Worldcup V10 Final Complete
+Miracle55 Worldcup V10.1 Branding Edition
 
-สิ่งที่แก้และเพิ่ม:
-- แก้ JavaScript Syntax Error ใน app.js แล้ว
-- Login / Leaderboard / Submit กลับมาทำงานได้
-- Leaderboard Privacy: username + ชื่อย่อ 3-4 ตัวอักษร
-- Top 20 + สีอันดับ 1-10 + Prize Zone
-- เพิ่ม Podium Top 3
-- เพิ่ม Statistics Card หน้าแรก
-- เพิ่ม Hall of Fame Preview
-- Card วิธีคิดคะแนนครบ 6 ข้อ
-- Responsive มือถือ + Desktop
-- Animation เบา ๆ
+สิ่งที่แก้ในเวอร์ชันนี้:
+- เปลี่ยน Branding ให้ใช้ชื่อเว็บ Miracle55
+- เพิ่ม Title / Meta / Open Graph เป็น Miracle55
+- Footer แสดง © 2026 Miracle55
+- หน้า Admin ใช้ชื่อ Miracle55 Admin Center
+- ตั้งตัวแปร SITE_NAME และ EVENT_NAME ใน supabase-config.js เพื่อแก้ชื่อเว็บในอนาคตได้ง่าย
+- ลบ/แทนที่คำว่า vivarich168-rgb จากไฟล์เว็บทั้งหมด
 
 วิธีใช้:
 1) แตก ZIP
-2) อัปโหลดไฟล์ทั้งหมดไป root repo GitHub ทับของเดิม
-3) Supabase > SQL Editor > รัน 00_RUN_THIS_SQL_FIRST.sql
+2) อัปโหลดไฟล์ทั้งหมดไปที่ root ของ GitHub repo ทับของเดิม
+3) ถ้ายังไม่ได้รัน SQL ล่าสุด ให้รัน 00_RUN_THIS_SQL_FIRST.sql ใน Supabase
 4) เปิดหน้าเว็บ:
-https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v10-final-1
+https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v10.1-branding
 
-หน้าแอดมิน:
-https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v10-final-1
+หน้า Admin:
+https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v10.1-branding
 
-รหัสแอดมิน: 556677
-
-ถ้าเว็บยังเป็นหน้าเก่า ให้กด Ctrl+F5 หรือเปลี่ยนท้าย URL เป็น ?v=v10-final-2
+หมายเหตุ:
+URL ของ GitHub Pages ยังจะมีชื่อบัญชี GitHub อยู่ตามระบบของ GitHub
+ถ้าต้องการซ่อนชื่อบัญชีเต็มรูปแบบ ให้เชื่อม Custom Domain เช่น worldcup.miracle55.com

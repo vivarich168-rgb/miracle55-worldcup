@@ -459,3 +459,14 @@ button:hover{filter:brightness(1.12);transform:translateY(-1px)}
 .hall-title{font-weight:950;color:#fef3c7;margin-bottom:5px}
 .hall-body{color:#e2e8f0;font-size:13px;line-height:1.5}
 @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.podium-wrap{grid-template-columns:1fr}.podium-1{transform:none;order:-1}}
+
+
+.site-footer {
+  max-width: 1180px;
+  margin: 28px auto 8px;
+  padding: 14px 16px;
+  text-align: center;
+  color: rgba(226, 232, 240, .72);
+  font-size: 12px;
+  border-top: 1px solid rgba(148, 163, 184, .16);
+}

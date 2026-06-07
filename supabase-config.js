@@ -12,7 +12,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
 });
 
 const SITE_NAME = 'Miracle55';
-const EVENT_NAME = 'FIFA WORLD CUP 2026';
+const EVENT_NAME = 'FIFA Worldcup 2026';
 const PREDICTION_DEADLINE = '2026-06-28T23:59:59+07:00';
 
 console.log('✅ Supabase config loaded:', supabaseUrl);
