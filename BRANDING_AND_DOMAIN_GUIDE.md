@@ -1,4 +1,4 @@
-# Miracle55 Worldcup V10.2 Multi-Site Starter
+# Kongo Group Worldcup V10.2 Multi-Site Starter
 
 ชุดนี้ทำไว้เป็น "ต้นแบบ" สำหรับคัดลอกไปทำเว็บอื่นอีกหลายเว็บ
 
@@ -7,10 +7,10 @@
 เปิดไฟล์ `supabase-config.js` แล้วแก้เฉพาะส่วนนี้:
 
 ```js
-const SITE_NAME = 'Miracle55';
+const SITE_NAME = 'Kongo Group';
 const EVENT_NAME = 'FIFA Worldcup 2026';
 const SITE_TAGLINE = 'Prediction Challenge';
-const SITE_DOMAIN_HINT = 'worldcup.miracle55.com';
+const SITE_DOMAIN_HINT = 'worldcup.kongo-group.com';
 ```
 
 ตัวอย่างเว็บใหม่:
@@ -33,17 +33,17 @@ https://vivarich168-rgb.github.io/mirade55-worldcup/
 ถ้าต้องการไม่ให้โชว์ชื่อบัญชี ต้องใช้ Custom Domain เช่น:
 
 ```text
-https://worldcup.miracle55.com
+https://worldcup.kongo-group.com
 ```
 
 ## วิธีตั้ง Custom Domain บน GitHub Pages
 
-1. ซื้อโดเมน เช่น `miracle55.com`
+1. ซื้อโดเมน เช่น `kongo-group.com`
 2. เข้า GitHub Repository ของเว็บ
 3. ไปที่ Settings > Pages
 4. ช่อง Custom domain ใส่:
    ```text
-   worldcup.miracle55.com
+   worldcup.kongo-group.com
    ```
 5. กด Save
 6. ไปที่ DNS ของผู้ให้บริการโดเมน
@@ -56,7 +56,7 @@ https://worldcup.miracle55.com
 8. รอ DNS อัปเดต
 9. กลับมาติ๊ก Enforce HTTPS
 
-## ถ้าใช้โดเมนหลัก เช่น miracle55.com
+## ถ้าใช้โดเมนหลัก เช่น kongo-group.com
 
 ให้ตั้ง A Record ไปที่ IP ของ GitHub Pages:
 
@@ -75,15 +75,15 @@ vivarich168-rgb.github.io
 
 ## สำหรับ 10 เว็บ แนะนำโครงสร้างแบบนี้
 
-- เว็บ 1: `worldcup.miracle55.com`
+- เว็บ 1: `worldcup.kongo-group.com`
 - เว็บ 2: `worldcup.luckyball99.com`
 - เว็บ 3: `worldcup.goalwin88.com`
 
 หรือถ้าใช้โดเมนเดียว:
 
-- `miracle55.com/worldcup`
-- `miracle55.com/hanoi`
-- `miracle55.com/lotto`
+- `kongo-group.com/worldcup`
+- `kongo-group.com/hanoi`
+- `kongo-group.com/lotto`
 
 ## สิ่งที่ต้องเปลี่ยนทุกครั้งเมื่อทำเว็บใหม่
 

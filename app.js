@@ -71,7 +71,7 @@ function startCountdown(){
 }
 
 function applyBranding(){
-    if($('siteNameText')) $('siteNameText').innerText = typeof SITE_NAME !== 'undefined' ? SITE_NAME : 'Miracle55';
+    if($('siteNameText')) $('siteNameText').innerText = typeof SITE_NAME !== 'undefined' ? SITE_NAME : 'Kongo Group';
     if($('eventNameText')) $('eventNameText').innerText = typeof EVENT_NAME !== 'undefined' ? EVENT_NAME : 'FIFA WORLD CUP 2026';
 }
 

@@ -1,4 +1,4 @@
-Miracle55 Worldcup V10.2 Multi-Site Starter
+Kongo Group Worldcup V10.2 Multi-Site Starter
 
 เวอร์ชันนี้ทำเพื่อใช้เป็นต้นแบบสำหรับทำเว็บแบบเดียวกันหลายเว็บ
 
@@ -17,5 +17,5 @@ Miracle55 Worldcup V10.2 Multi-Site Starter
 6) เปิดทดสอบด้วย ?v=v10.2-template
 
 ตัวอย่าง:
-https://worldcup.miracle55.com/?v=v10.2-template
-https://worldcup.miracle55.com/admin.html?v=v10.2-template
+https://worldcup.kongo-group.com/?v=v10.2-template
+https://worldcup.kongo-group.com/admin.html?v=v10.2-template
