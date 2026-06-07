@@ -1,44 +1,49 @@
-Miracle55 Worldcup - Admin Fix Ready
+Miracle55 Worldcup - CLEAN FINAL
 
-ทำตามนี้ทีละข้อครับ
+ทำตามนี้ทีละข้อเท่านั้นครับ
 
 1) แตก ZIP นี้
 
-2) เข้า GitHub repo: miracle55-worldcup
+2) เข้า GitHub repo ที่ถูกต้อง:
+   miracle55-worldcup
 
-3) อัปโหลดไฟล์ทั้งหมดนี้ทับของเดิมที่หน้าแรกของ repo เท่านั้น ห้ามใส่ไว้ในโฟลเดอร์ซ้อน
-ไฟล์ที่ต้องเห็นในหน้า repo:
-- index.html
-- admin.html
-- app.js
-- calculate.js
-- style.css
-- supabase-config.js
-- SQL_SETUP_POLICY.sql
-- README_UPLOAD.txt
+3) อัปโหลดไฟล์ทั้งหมดใน ZIP นี้ไปไว้หน้าแรกของ repo เท่านั้น ห้ามซ้อนโฟลเดอร์
+   ไฟล์ที่ต้องเห็นใน repo:
+   - index.html
+   - admin.html
+   - app.js
+   - calculate.js
+   - style.css
+   - supabase-config.js
+   - 00_RUN_THIS_SQL_FIRST.sql
+   - README_UPLOAD.txt
 
 4) เข้า Supabase > SQL Editor > New query
-เปิดไฟล์ SQL_SETUP_POLICY.sql ด้วย Notepad แล้วกด Ctrl+A, Ctrl+C
-กลับมาที่ SQL Editor แล้วกด Ctrl+V จากนั้นกด Run
-ไฟล์ SQL ตัวนี้รันซ้ำได้ และมี notify reload schema แล้ว
+   เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad
+   กด Ctrl+A > Ctrl+C
+   กลับไป SQL Editor > Ctrl+V > Run
+   รอ 30 วินาที
 
-5) รอ GitHub Pages อัปเดต 1-3 นาที
+5) เปิดเว็บผู้เล่น:
+   https://vivarich168-rgb.github.io/miracle55-worldcup/?v=clean-final-1
 
-6) เปิดหน้าผู้เล่น:
-https://vivarich168-rgb.github.io/miracle55-worldcup/?v=admin-fix-1
+6) เปิดหน้าแอดมิน:
+   https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=clean-final-1
 
-7) เปิดหน้าแอดมิน:
-https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=admin-fix-1
-รหัสแอดมินเบื้องต้น: 556677
+7) รหัสแอดมินเบื้องต้น:
+   556677
 
-8) match_key สำหรับกรอกผลจริง:
-รอบแรก: m-1 ถึง m-16
-รอบ 16 ทีม: left-r16-1 ถึง left-r16-4, right-r16-1 ถึง right-r16-4
-รอบ 8 ทีม: left-r8-1 ถึง left-r8-2, right-r8-1 ถึง right-r8-2
-รอบ 4 ทีม: left-r4-1, right-r4-1
-นัดชิง: final
-ชิงอันดับ 3: third
+8) วิธีกรอกแอดมิน:
+   match_key รอบแรก: m-1 ถึง m-16
+   ตัวอย่าง:
+   match_key: m-10
+   สกอร์ A: 3
+   สกอร์ B: 1
+   ผู้ชนะ: สวิตเซอร์แลนด์
 
-หมายเหตุความปลอดภัย:
-ชุดนี้ไม่ใส่ service_role key ลง GitHub เพราะอันตรายมาก ใช้ anon key + RLS Policy สำหรับทดสอบ/ใช้งานเบื้องต้น
-ถ้าจะใช้จริงกับเงินรางวัล ควรทำระบบ admin ผ่าน Supabase Auth หรือ Edge Function ภายหลัง
+9) ถ้าเว็บยังแปลก ให้กด Ctrl+F5
+
+หมายเหตุสำคัญ:
+- ชุดนี้ไม่ใช้ service_role key บน GitHub เพราะอันตรายมาก
+- ใช้ anon key + RLS แบบเปิดสำหรับทดสอบ/ใช้งานเว็บ static
+- ถ้าจะใช้กับเงินรางวัลจริง ควรทำระบบแอดมินผ่าน server/backend เพิ่มในอนาคต

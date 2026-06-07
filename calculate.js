@@ -36,7 +36,8 @@ async function calculateAndSaveScores(matchKey) {
         let newPoints = 0;
 
         const exactScore = Number(p.pred_a) === Number(match.actual_score_a) && Number(p.pred_b) === Number(match.actual_score_b);
-        const correctWinner = p.predicted_winner && match.actual_winner && p.predicted_winner === match.actual_winner;
+        const actualWinner = match.actual_winner || null;
+        const correctWinner = p.predicted_winner && actualWinner && p.predicted_winner === actualWinner;
 
         if (exactScore) newPoints = 3000;
         else if (correctWinner) newPoints = 1000;
