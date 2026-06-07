@@ -20,7 +20,7 @@ const PREDICTION_DEADLINE = '2026-06-28T23:59:59+07:00';
 const SITE_NAME = 'Kongo Group';
 const EVENT_NAME = 'FIFA Worldcup 2026';
 const SITE_TAGLINE = 'Prediction Challenge';
-const SITE_DOMAIN_HINT = 'worldcup.kongo-group.com';
+const SITE_DOMAIN_HINT = 'worldcup.kongogroup.com';
 // ===============================
 
 console.log('✅ Supabase config loaded:', supabaseUrl);

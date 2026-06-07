@@ -121,13 +121,13 @@ alter table public.users enable row level security;
 alter table public.matches enable row level security;
 alter table public.predictions enable row level security;
 
-drop policy if exists kongo-group_users_anon_all on public.users;
-drop policy if exists kongo-group_matches_anon_all on public.matches;
-drop policy if exists kongo-group_predictions_anon_all on public.predictions;
+drop policy if exists kongo_group_users_anon_all on public.users;
+drop policy if exists kongo_group_matches_anon_all on public.matches;
+drop policy if exists kongo_group_predictions_anon_all on public.predictions;
 
-create policy kongo-group_users_anon_all on public.users for all to anon using (true) with check (true);
-create policy kongo-group_matches_anon_all on public.matches for all to anon using (true) with check (true);
-create policy kongo-group_predictions_anon_all on public.predictions for all to anon using (true) with check (true);
+create policy kongo_group_users_anon_all on public.users for all to anon using (true) with check (true);
+create policy kongo_group_matches_anon_all on public.matches for all to anon using (true) with check (true);
+create policy kongo_group_predictions_anon_all on public.predictions for all to anon using (true) with check (true);
 
 grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.users to anon, authenticated;

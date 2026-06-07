@@ -1,4 +1,4 @@
-# Kongo Group Worldcup V10.2 Multi-Site Starter
+# Kongo Group Worldcup V10.2
 
 ชุดนี้ทำไว้เป็น "ต้นแบบ" สำหรับคัดลอกไปทำเว็บอื่นอีกหลายเว็บ
 
@@ -107,8 +107,8 @@ vivarich168-rgb.github.io
 ## ลิงก์ทดสอบหลัง Deploy
 
 ```text
-https://<your-domain>/?v=v10.2-template
-https://<your-domain>/admin.html?v=v10.2-template
+https://<your-domain>/?v=v10.2-kongo
+https://<your-domain>/admin.html?v=v10.2-kongo
 ```
 
 รหัส Admin เริ่มต้น: `556677`
