@@ -40,7 +40,6 @@ function $(id) { return document.getElementById(id); }
 function val(id) { return $(id)?.value ?? ''; }
 function txt(id) { return $(id)?.innerText ?? WAITING; }
 function setTxt(id, value) { if ($(id)) $(id).innerText = value || WAITING; }
-function escapeHtml(s) { return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 function checkDeadline() { return new Date() <= new Date(PREDICTION_DEADLINE); }
 
 function createMatchBlock(match) {
@@ -60,10 +59,13 @@ function createMatchBlock(match) {
             </div>
             <div class="tie-box" id="tie-${match.key}">
                 <label>กรณีเสมอ เลือกทีมเข้ารอบ/ชนะจุดโทษ</label>
-                <select id="winner-${match.key}" onchange="calculateFlow()"><option value="">เลือกทีมเข้ารอบ</option></select>
+                <select id="winner-${match.key}" onchange="calculateFlow()">
+                    <option value="">เลือกทีมเข้ารอบ</option>
+                </select>
             </div>
             ${match.key === 'final' ? '<div id="champ-display" style="text-align:center; font-size:14px; color:#2ea043; font-weight:bold; margin-top:5px;">แชมป์โลก: ??</div>' : ''}
-        </div>`;
+        </div>
+    `;
 }
 
 function initLayout() {
@@ -82,15 +84,18 @@ function initLayout() {
 }
 
 function updateTieSelect(matchKey, t1, t2, s1, s2) {
-    const box = $(`tie-${matchKey}`), select = $(`winner-${matchKey}`);
+    const box = $(`tie-${matchKey}`);
+    const select = $(`winner-${matchKey}`);
     if (!box || !select) return;
     const ready = s1 !== '' && s2 !== '' && String(s1) === String(s2) && t1 !== WAITING && t2 !== WAITING;
     box.style.display = ready ? 'block' : 'none';
     if (ready) {
         const old = select.value;
-        select.innerHTML = `<option value="">เลือกทีมเข้ารอบ</option><option value="${escapeHtml(t1)}">${escapeHtml(t1)}</option><option value="${escapeHtml(t2)}">${escapeHtml(t2)}</option>`;
+        select.innerHTML = `<option value="">เลือกทีมเข้ารอบ</option><option value="${t1}">${t1}</option><option value="${t2}">${t2}</option>`;
         if ([t1, t2].includes(old)) select.value = old;
-    } else select.value = '';
+    } else {
+        select.value = '';
+    }
 }
 
 function getWinnerLoser(matchKey) {
@@ -108,30 +113,37 @@ function getWinnerLoser(matchKey) {
 
 function calculateFlow() {
     for (let i=1; i<=4; i++) {
-        const a = getWinnerLoser(`m-${(i*2)-1}`), b = getWinnerLoser(`m-${i*2}`);
+        const a = getWinnerLoser(`m-${(i*2)-1}`);
+        const b = getWinnerLoser(`m-${i*2}`);
         setTxt(`left-r16-${i}-t1`, a.w); setTxt(`left-r16-${i}-t2`, b.w);
     }
     for (let i=1; i<=2; i++) {
-        const a = getWinnerLoser(`left-r16-${(i*2)-1}`), b = getWinnerLoser(`left-r16-${i*2}`);
+        const a = getWinnerLoser(`left-r16-${(i*2)-1}`);
+        const b = getWinnerLoser(`left-r16-${i*2}`);
         setTxt(`left-r8-${i}-t1`, a.w); setTxt(`left-r8-${i}-t2`, b.w);
     }
-    const l8a = getWinnerLoser('left-r8-1'), l8b = getWinnerLoser('left-r8-2');
+    const l8a = getWinnerLoser('left-r8-1');
+    const l8b = getWinnerLoser('left-r8-2');
     setTxt('left-r4-1-t1', l8a.w); setTxt('left-r4-1-t2', l8b.w);
     const l4 = getWinnerLoser('left-r4-1');
     setTxt('final-t1', l4.w); setTxt('third-t1', l4.l);
 
     for (let i=1; i<=4; i++) {
-        const a = getWinnerLoser(`m-${(i*2)+7}`), b = getWinnerLoser(`m-${(i*2)+8}`);
+        const a = getWinnerLoser(`m-${(i*2)+7}`);
+        const b = getWinnerLoser(`m-${(i*2)+8}`);
         setTxt(`right-r16-${i}-t1`, a.w); setTxt(`right-r16-${i}-t2`, b.w);
     }
     for (let i=1; i<=2; i++) {
-        const a = getWinnerLoser(`right-r16-${(i*2)-1}`), b = getWinnerLoser(`right-r16-${i*2}`);
+        const a = getWinnerLoser(`right-r16-${(i*2)-1}`);
+        const b = getWinnerLoser(`right-r16-${i*2}`);
         setTxt(`right-r8-${i}-t1`, a.w); setTxt(`right-r8-${i}-t2`, b.w);
     }
-    const r8a = getWinnerLoser('right-r8-1'), r8b = getWinnerLoser('right-r8-2');
+    const r8a = getWinnerLoser('right-r8-1');
+    const r8b = getWinnerLoser('right-r8-2');
     setTxt('right-r4-1-t1', r8a.w); setTxt('right-r4-1-t2', r8b.w);
     const r4 = getWinnerLoser('right-r4-1');
     setTxt('final-t2', r4.w); setTxt('third-t2', r4.l);
+
     const finalMatch = getWinnerLoser('final');
     if ($('champ-display')) $('champ-display').innerText = `แชมป์โลก: ${finalMatch.w}`;
     getWinnerLoser('third');
@@ -141,15 +153,21 @@ async function checkAndLoginUser() {
     const username = $('username').value.trim();
     const fullName = $('fullName').value.trim();
     if (!username) return alert('กรุณากรอก Username ครับ');
+
     let { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).maybeSingle();
     if (error) return alert('โหลดข้อมูลผู้เล่นไม่สำเร็จ: ' + error.message);
+
     if (!user) {
         if (!fullName) return alert('กรุณากรอกชื่อ-นามสกุลจริงก่อนสมัครครับ');
         const { data: newUser, error: createError } = await supabaseClient
-            .from('users').insert([{ username, full_name: fullName, total_points: 0 }]).select().single();
+            .from('users')
+            .insert([{ username, full_name: fullName, total_points: 0 }])
+            .select()
+            .single();
         if (createError) return alert('สมัครผู้เล่นไม่สำเร็จ: ' + createError.message);
         user = newUser;
     }
+
     currentUser = user;
     initLayout();
     $('loginSection').style.display = 'none';
@@ -164,6 +182,7 @@ function collectPredictionRows() {
     const topScorer = $('top-scorer-guess').value.trim();
     const allKeys = [...initialMatches.left, ...initialMatches.right].map(m=>({key:m.key, stage:m.stage, match_id:m.id}))
         .concat(dynamicMatches.map(m=>({key:m.key, stage:m.stage, match_id:null})));
+
     const rows = [];
     for (const m of allKeys) {
         const t1 = txt(`${m.key}-t1`), t2 = txt(`${m.key}-t2`);
@@ -193,25 +212,40 @@ async function savePredictions() {
     if (!currentUser) return alert('กรุณาเข้าสู่ระบบก่อนครับ');
     const rows = collectPredictionRows();
     if (rows.length === 0) return alert('กรุณากรอกสกอร์อย่างน้อย 1 คู่ และถ้าเสมอต้องเลือกทีมเข้ารอบด้วยครับ');
-    const { error } = await supabaseClient.from('predictions').upsert(rows, { onConflict: 'user_id,match_key' });
-    if (error) return alert('บันทึกข้อมูลไม่สำเร็จ: ' + error.message + '\n\nให้รัน 00_RUN_THIS_SQL_FIRST.sql ล่าสุดก่อนครับ');
+
+    const { error } = await supabaseClient
+        .from('predictions')
+        .upsert(rows, { onConflict: 'user_id,match_key' });
+
+    if (error) return alert('บันทึกข้อมูลไม่สำเร็จ: ' + error.message);
     alert(`🎉 บันทึกผลทายเรียบร้อยแล้วทั้งหมด ${rows.length} รายการ`);
 }
 
-async function loadLeaderboard() {
+function renderLeaderboard(data, targetId) {
+    const rows = (data || []).slice(0, 20).map((u, i) => {
+        const rank = i + 1;
+        const cls = rank <= 10 ? `rank-row rank-${rank}` : '';
+        const badge = `<span class="rank-badge">${rank}</span>`;
+        return `<tr class="${cls}">
+            <td>${badge}</td>
+            <td>${u.full_name || u.username || '-'}</td>
+            <td>${u.total_points || 0}</td>
+        </tr>`;
+    }).join('');
+    $(targetId).innerHTML = `
+        <table class="table">
+            <thead><tr><th>อันดับ</th><th>ผู้เล่น</th><th>คะแนน</th></tr></thead>
+            <tbody>${rows || '<tr><td colspan="3">ยังไม่มีข้อมูลคะแนน</td></tr>'}</tbody>
+        </table>`;
+}
+
+async function loadLeaderboard(targetId='leaderboardContent', showCard=true) {
     const { data, error } = await supabaseClient
         .from('users')
         .select('username, full_name, total_points')
         .order('total_points', { ascending: false })
         .limit(20);
     if (error) return alert('โหลดตารางคะแนนไม่สำเร็จ: ' + error.message);
-    $('leaderboardCard').style.display = 'block';
-    $('leaderboardContent').innerHTML = `
-        <table class="table leaderboard-table">
-            <thead><tr><th>อันดับ</th><th>ผู้เล่น</th><th>คะแนน</th></tr></thead>
-            <tbody>${data.map((u,i)=>{
-                const rank = i + 1;
-                return `<tr class="rank-row rank-${rank <= 10 ? rank : 'normal'}"><td><span class="rank-badge">${rank}</span></td><td>${escapeHtml(u.full_name || u.username)}</td><td>${u.total_points || 0}</td></tr>`;
-            }).join('')}</tbody>
-        </table>`;
+    if (showCard && $('leaderboardCard')) $('leaderboardCard').style.display = 'block';
+    renderLeaderboard(data, targetId);
 }

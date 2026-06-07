@@ -1,13 +1,10 @@
-Miracle55 Worldcup - Clean Final Top20 Ready
+Miracle55 Worldcup Top20 Final Deploy Ready
 
-ทำตามนี้ทีละข้อ ไม่ต้องรันไฟล์เก่าซ้ำ
+ทำตามนี้ทีละข้อ:
 
 1) แตก ZIP นี้
 
-2) เข้า GitHub repo: miracle55-worldcup
-
-3) อัปโหลดไฟล์ทั้งหมดใน ZIP ไปไว้หน้าแรกของ repo เท่านั้น ห้ามซ้อนโฟลเดอร์
-ไฟล์ที่ต้องเห็นใน repo:
+2) อัปโหลดไฟล์ทั้งหมดไปที่ root ของ GitHub repo:
 - index.html
 - admin.html
 - app.js
@@ -17,43 +14,24 @@ Miracle55 Worldcup - Clean Final Top20 Ready
 - 00_RUN_THIS_SQL_FIRST.sql
 - README_UPLOAD.txt
 
-4) เข้า Supabase > SQL Editor > New query
-เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad แล้วกด Ctrl+A, Ctrl+C
-กลับมาที่ SQL Editor แล้วกด Ctrl+V จากนั้นกด Run
+3) เข้า Supabase > SQL Editor
+เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad แล้ว Copy ทั้งหมดไปวาง จากนั้นกด Run
 
-ไฟล์ SQL นี้รวม:
-- เพิ่ม/ซ่อมคอลัมน์ match_key
-- ลบ predictions เก่าที่ match_key ว่าง
-- ลบรายการทายซ้ำ user_id + match_key
-- สร้าง unique index ใหม่
-- เปิด RLS + policy
-- reload schema cache
+4) ถ้า Results ส่วนแรกไม่มี duplicate ที่ match_key ไม่ใช่ NULL = ผ่าน
+หมายเหตุ: แถวเก่า match_key = NULL ไม่กระทบระบบใหม่ เพราะ unique index ใช้ WHERE match_key IS NOT NULL
 
-5) รอ 30 วินาที
+5) เปิดเว็บผู้เล่น:
+https://vivarich168-rgb.github.io/miracle55-worldcup/?v=top20-final-4
 
-6) เปิดเว็บผู้เล่น:
-https://vivarich168-rgb.github.io/miracle55-worldcup/?v=top20-final-2
+6) เปิดหน้าแอดมิน:
+https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=top20-final-4
 
-7) เปิดหน้าแอดมิน:
-https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=top20-final-2
+รหัสแอดมิน: 556677
 
-รหัสแอดมินเบื้องต้น: 556677
-
-8) สิ่งที่แก้แล้วในชุดนี้:
-- Leaderboard แสดง Top 20 เท่านั้น
-- อันดับ 1-10 มีสีเด่นตามลำดับรางวัล
+สิ่งที่แก้แล้ว:
+- Leaderboard แสดง Top 20
+- อันดับ 1-10 มีสีเด่น
 - หน้า admin มี Leaderboard Top 20
-- กันส่งผลทายซ้ำด้วย unique index user_id + match_key
-- แก้ปัญหา match_key หาย / duplicate / schema cache
-
-9) match_key สำหรับกรอกผลจริง:
-รอบแรก: m-1 ถึง m-16
-รอบ 16 ทีม: left-r16-1 ถึง left-r16-4, right-r16-1 ถึง right-r16-4
-รอบ 8 ทีม: left-r8-1 ถึง left-r8-2, right-r8-1 ถึง right-r8-2
-รอบ 4 ทีม: left-r4-1, right-r4-1
-นัดชิง: final
-ชิงอันดับ 3: third
-
-หมายเหตุความปลอดภัย:
-ชุดนี้ใช้ anon public key + RLS policy แบบเปิดสำหรับเว็บ static เพื่อให้ใช้งานง่าย
-ถ้าเปิดใช้จริงกับเงินรางวัลใหญ่ แนะนำเพิ่ม Supabase Auth และแยกสิทธิ์ admin/user เพิ่มเติม
+- ป้องกัน duplicate prediction ด้วย unique index แบบ partial
+- match_key ของ matches/predictions ถูกเติมให้ครบ
+- SQL รันซ้ำได้
