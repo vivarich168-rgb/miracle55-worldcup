@@ -1,5 +1,5 @@
 -- 00_RUN_THIS_SQL_FIRST.sql
--- Miracle55 Worldcup clean setup + Top20 Leaderboard support
+-- Miracle55 Worldcup V6 UI Upgrade + stable database fix
 -- รันไฟล์นี้ใน Supabase SQL Editor ได้ซ้ำอย่างปลอดภัย
 
 create table if not exists public.users (
@@ -50,6 +50,9 @@ alter table public.matches add column if not exists actual_score_a integer;
 alter table public.matches add column if not exists actual_score_b integer;
 alter table public.matches add column if not exists actual_winner text;
 alter table public.matches add column if not exists is_finished boolean default false;
+alter table public.matches alter column team_a drop not null;
+alter table public.matches alter column team_b drop not null;
+
 alter table public.predictions add column if not exists match_key text;
 alter table public.predictions add column if not exists stage text;
 alter table public.predictions add column if not exists team_a text;
@@ -92,7 +95,7 @@ drop index if exists predictions_user_match_key_unique;
 
 with ranked as (
   select
-    id,
+    ctid,
     row_number() over (
       partition by user_id, match_key
       order by updated_at desc nulls last, created_at desc nulls last, id desc
@@ -103,11 +106,15 @@ with ranked as (
 )
 delete from public.predictions p
 using ranked r
-where p.id = r.id
+where p.ctid = r.ctid
   and r.rn > 1;
 
 create unique index if not exists predictions_user_match_key_unique
 on public.predictions(user_id, match_key)
+where match_key is not null;
+
+create unique index if not exists matches_match_key_unique
+on public.matches(match_key)
 where match_key is not null;
 
 alter table public.users enable row level security;
@@ -132,6 +139,7 @@ notify pgrst, 'reload schema';
 
 select user_id, match_key, count(*) as rows_count
 from public.predictions
+where match_key is not null
 group by user_id, match_key
 having count(*) > 1;
 

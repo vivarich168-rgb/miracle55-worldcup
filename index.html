@@ -5,12 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Miracle55 - FIFA Worldcup 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=top20-final-4">
+    <link rel="stylesheet" href="style.css?v=v6-ui-upgrade-1">
 </head>
 <body>
+    <section class="hero">
+        <div class="hero-kicker">🏆 Worldcup Prediction Challenge</div>
+        <h1 class="hero-title">Miracle55 <span>Worldcup 2026</span></h1>
+        <p class="hero-desc">
+            ทายผลฟุตบอลโลกแบบ Tournament Bracket ลุ้นรางวัลรวม 100,000 บาท
+            กรอกสกอร์ เลือกทีมเข้ารอบ และไต่อันดับสู่ Leaderboard Top 20
+        </p>
+        <div class="hero-actions">
+            <a class="hero-btn" href="#loginSection">🚀 เริ่มทายผลเลย</a>
+            <a class="hero-btn secondary" href="#leaderboardCard" onclick="loadLeaderboard()">🏅 ดูตารางคะแนน</a>
+        </div>
+    </section>
+
+    <div class="countdown-card" id="countdownCard">
+        <div class="countdown-box"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">วัน</div></div>
+        <div class="countdown-box"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">ชั่วโมง</div></div>
+        <div class="countdown-box"><div class="countdown-num" id="cd-minutes">--</div><div class="countdown-label">นาที</div></div>
+        <div class="countdown-box"><div class="countdown-num" id="cd-seconds">--</div><div class="countdown-label">วินาที</div></div>
+    </div>
+
     <div class="header-zone">
-        <h1>🏆⚽ Miracle55 FIFA Worldcup 2026 ⚽🏆</h1>
-        <p class="sub-title">ชิงเงินรางวัลรวม 100,000 บาท</p>
+        <p class="sub-title">⏰ ปิดรับทายผลวันที่ 28 มิ.ย. 2026 เวลา 23:59 น.</p>
     </div>
 
     <div id="loginSection" class="login-card">
@@ -18,7 +37,7 @@
         <input type="text" id="username" placeholder="Username เช่น marke123">
         <input type="text" id="fullName" placeholder="ชื่อ-นามสกุลจริง สำหรับติดต่อรับรางวัล">
         <button style="width:100%;" onclick="checkAndLoginUser()">เข้าสู่ระบบ & เปิดตารางทายผล</button>
-        <p class="warning">* เวอร์ชันนี้กันกดส่งซ้ำ, เก็บทายผลได้ทุกรอบ และรองรับกรณีสกอร์เสมอให้เลือกทีมเข้ารอบ</p>
+        <p class="warning">* กันกดส่งซ้ำ, เก็บทายผลได้ทุกรอบ และรองรับกรณีเสมอให้เลือกทีมเข้ารอบ</p>
     </div>
 
     <div id="loginStatus" class="status-ok"></div>
@@ -37,7 +56,7 @@
         <div class="center-column">
             <div id="finalBlock"></div>
             <div id="thirdBlock"></div>
-            <button class="btn-submit-all" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
+            <button class="btn-submit-all pulse" onclick="savePredictions()">🚀 ส่งผลการทายทั้งหมด</button>
             <button class="btn-muted" onclick="loadLeaderboard()">ดูอันดับคะแนน Top 20</button>
         </div>
 
@@ -49,11 +68,11 @@
 
     <div class="leaderboard-card" id="leaderboardCard" style="display:none;">
         <h3 style="color:#58a6ff; margin-top:0;">🏅 ตารางคะแนน Top 20</h3>
-        <div class="small-note">อันดับ 1-10 มีสีเด่นเพื่อแสดงกลุ่มรางวัล</div>
+        <div class="small-note">อันดับ 1-10 มีสีเด่นและ Badge Prize Zone</div>
         <div id="leaderboardContent"></div>
     </div>
 
-    <script src="supabase-config.js?v=top20-final-4"></script>
-    <script src="app.js?v=top20-final-4"></script>
+    <script src="supabase-config.js?v=v6-ui-upgrade-1"></script>
+    <script src="app.js?v=v6-ui-upgrade-1"></script>
 </body>
 </html>

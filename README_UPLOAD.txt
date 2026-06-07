@@ -1,37 +1,26 @@
-Miracle55 Worldcup Top20 Final Deploy Ready
+Miracle55 Worldcup V6 UI Upgrade
 
-ทำตามนี้ทีละข้อ:
+สิ่งที่เพิ่มในเวอร์ชันนี้:
+- หน้า Hero ใหม่ ดูทันสมัย น่าตื่นเต้น
+- Countdown ปิดรับทายผล
+- Leaderboard Top 20 พร้อม Medal/Prize Zone
+- สีอันดับ 1-10 ชัดเจน
+- หน้า Admin มี Dashboard Summary
+- สถานะแมตช์มีสี จบแล้ว/ยังไม่จบ
+- ปรับดีไซน์ Glass / Neon / Premium
+- SQL รวมแก้ match_key, duplicate, unique index, team_a/team_b
 
-1) แตก ZIP นี้
+วิธีใช้:
+1) แตก ZIP
+2) อัปโหลดไฟล์ทั้งหมดไป root repo GitHub ทับของเดิม
+3) Supabase > SQL Editor > รัน 00_RUN_THIS_SQL_FIRST.sql
+4) เปิดหน้าเว็บ:
+https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v6-ui-upgrade-1
 
-2) อัปโหลดไฟล์ทั้งหมดไปที่ root ของ GitHub repo:
-- index.html
-- admin.html
-- app.js
-- calculate.js
-- style.css
-- supabase-config.js
-- 00_RUN_THIS_SQL_FIRST.sql
-- README_UPLOAD.txt
-
-3) เข้า Supabase > SQL Editor
-เปิดไฟล์ 00_RUN_THIS_SQL_FIRST.sql ด้วย Notepad แล้ว Copy ทั้งหมดไปวาง จากนั้นกด Run
-
-4) ถ้า Results ส่วนแรกไม่มี duplicate ที่ match_key ไม่ใช่ NULL = ผ่าน
-หมายเหตุ: แถวเก่า match_key = NULL ไม่กระทบระบบใหม่ เพราะ unique index ใช้ WHERE match_key IS NOT NULL
-
-5) เปิดเว็บผู้เล่น:
-https://vivarich168-rgb.github.io/miracle55-worldcup/?v=top20-final-4
-
-6) เปิดหน้าแอดมิน:
-https://vivarich168-rgb.github.io/miracle55-worldcup/admin.html?v=top20-final-4
+หน้าแอดมิน:
+https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v6-ui-upgrade-1
 
 รหัสแอดมิน: 556677
 
-สิ่งที่แก้แล้ว:
-- Leaderboard แสดง Top 20
-- อันดับ 1-10 มีสีเด่น
-- หน้า admin มี Leaderboard Top 20
-- ป้องกัน duplicate prediction ด้วย unique index แบบ partial
-- match_key ของ matches/predictions ถูกเติมให้ครบ
-- SQL รันซ้ำได้
+หมายเหตุ:
+ถ้า browser ยังแสดงหน้าเก่า ให้กด Ctrl+F5 หรือเปลี่ยนท้าย URL เป็น ?v=v6-ui-upgrade-2

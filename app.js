@@ -42,10 +42,35 @@ function txt(id) { return $(id)?.innerText ?? WAITING; }
 function setTxt(id, value) { if ($(id)) $(id).innerText = value || WAITING; }
 function checkDeadline() { return new Date() <= new Date(PREDICTION_DEADLINE); }
 
+function startCountdown() {
+    const ids = ['cd-days', 'cd-hours', 'cd-minutes', 'cd-seconds'];
+    if (!ids.every(id => $(id))) return;
+    const deadline = new Date(PREDICTION_DEADLINE).getTime();
+
+    function tick() {
+        const now = Date.now();
+        let diff = Math.max(0, deadline - now);
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        diff -= days * 1000 * 60 * 60 * 24;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        diff -= hours * 1000 * 60 * 60;
+        const minutes = Math.floor(diff / (1000 * 60));
+        diff -= minutes * 1000 * 60;
+        const seconds = Math.floor(diff / 1000);
+
+        $('cd-days').innerText = String(days).padStart(2, '0');
+        $('cd-hours').innerText = String(hours).padStart(2, '0');
+        $('cd-minutes').innerText = String(minutes).padStart(2, '0');
+        $('cd-seconds').innerText = String(seconds).padStart(2, '0');
+    }
+    tick();
+    setInterval(tick, 1000);
+}
+
 function createMatchBlock(match) {
     const isR32 = match.stage === 'R32';
     const title = isR32 ? `คู่ที่ ${match.id}` : match.label;
-    const borderColor = match.key === 'final' ? '#f0883e' : match.key === 'third' ? '#8b949e' : '#30363d';
+    const borderColor = match.key === 'final' ? '#f59e0b' : match.key === 'third' ? '#94a3b8' : 'rgba(148,163,184,.18)';
     return `
         <div class="match-block" style="border-color:${borderColor}" data-match-key="${match.key}" data-stage="${match.stage}">
             <div class="stage-label">${title}</div>
@@ -63,7 +88,7 @@ function createMatchBlock(match) {
                     <option value="">เลือกทีมเข้ารอบ</option>
                 </select>
             </div>
-            ${match.key === 'final' ? '<div id="champ-display" style="text-align:center; font-size:14px; color:#2ea043; font-weight:bold; margin-top:5px;">แชมป์โลก: ??</div>' : ''}
+            ${match.key === 'final' ? '<div id="champ-display" style="text-align:center; font-size:14px; color:#22c55e; font-weight:bold; margin-top:5px;">แชมป์โลก: ??</div>' : ''}
         </div>
     `;
 }
@@ -221,14 +246,23 @@ async function savePredictions() {
     alert(`🎉 บันทึกผลทายเรียบร้อยแล้วทั้งหมด ${rows.length} รายการ`);
 }
 
+function medalForRank(rank) {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    if (rank <= 10) return '🎁';
+    return '';
+}
+
 function renderLeaderboard(data, targetId) {
     const rows = (data || []).slice(0, 20).map((u, i) => {
         const rank = i + 1;
         const cls = rank <= 10 ? `rank-row rank-${rank}` : '';
+        const prize = rank <= 10 ? `<span class="prize-chip">${medalForRank(rank)} Prize Zone</span>` : '';
         const badge = `<span class="rank-badge">${rank}</span>`;
         return `<tr class="${cls}">
             <td>${badge}</td>
-            <td>${u.full_name || u.username || '-'}</td>
+            <td>${u.full_name || u.username || '-'} ${prize}</td>
             <td>${u.total_points || 0}</td>
         </tr>`;
     }).join('');
@@ -249,3 +283,26 @@ async function loadLeaderboard(targetId='leaderboardContent', showCard=true) {
     if (showCard && $('leaderboardCard')) $('leaderboardCard').style.display = 'block';
     renderLeaderboard(data, targetId);
 }
+
+async function loadAdminSummary() {
+    if (!$('sumPlayers')) return;
+
+    const [{ count: players }, { count: predictions }, { data: matches }] = await Promise.all([
+        supabaseClient.from('users').select('*', { count: 'exact', head: true }),
+        supabaseClient.from('predictions').select('*', { count: 'exact', head: true }),
+        supabaseClient.from('matches').select('is_finished')
+    ]);
+
+    const totalMatches = (matches || []).length;
+    const finished = (matches || []).filter(m => m.is_finished).length;
+    const waiting = Math.max(0, totalMatches - finished);
+
+    $('sumPlayers').innerText = players ?? 0;
+    $('sumPredictions').innerText = predictions ?? 0;
+    $('sumFinished').innerText = finished;
+    $('sumWaiting').innerText = waiting;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    startCountdown();
+});
