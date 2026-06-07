@@ -42,12 +42,14 @@ function txt(id){ return $(id)?.innerText ?? WAITING; }
 function setTxt(id,value){ if($(id)) $(id).innerText = value || WAITING; }
 function checkDeadline(){ return new Date() <= new Date(PREDICTION_DEADLINE); }
 
+
 function maskName(name){
-    if(!name) return '';
-    const clean = String(name).trim();
-    if(!clean) return '';
-    const first = clean[0];
-    return `${first}****`;
+    if (!name) return '';
+    const firstName = String(name).trim().split(' ')[0];
+    if (firstName.length <= 4) return firstName + '**';
+    return firstName.substring(0, 4) + '****';
+}
+****`;
 }
 
 function startCountdown(){

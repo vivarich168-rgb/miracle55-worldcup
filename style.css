@@ -366,3 +366,59 @@ button:hover{filter:brightness(1.12);transform:translateY(-1px)}
   .table-wrap{overflow-x:auto}
   .table{min-width:560px}
 }
+
+
+/* V9.2 Score Rules */
+.rules-card {
+  max-width: 980px;
+  margin: 0 auto 18px;
+  padding: 18px;
+}
+.rules-title {
+  margin: 0 0 12px;
+  color: #fef3c7;
+  font-size: 20px;
+  font-weight: 950;
+}
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 10px;
+}
+.rule-item {
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, .78);
+  border: 1px solid rgba(148, 163, 184, .18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.rule-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.rule-label {
+  color: #dbeafe;
+  font-weight: 850;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.rule-score {
+  margin-top: 5px;
+  color: #67e8f9;
+  font-size: 20px;
+  font-weight: 950;
+}
+.transparency-note {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  color: #cbd5e1;
+  background: rgba(34, 211, 238, .08);
+  border: 1px solid rgba(34, 211, 238, .18);
+  font-size: 12px;
+  line-height: 1.55;
+}
+@media(max-width:900px){
+  .rules-grid { grid-template-columns: 1fr; }
+  .rules-card { padding: 15px; }
+}

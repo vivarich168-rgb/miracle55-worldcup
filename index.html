@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Miracle55 - FIFA Worldcup 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="style.css?v=v9-ultimate-1">
+  <link rel="stylesheet" href="style.css?v=v9-final-2">
 </head>
 <body>
   <main class="app-shell">
@@ -34,6 +34,23 @@
         <div class="countdown-box"><div class="countdown-num" id="cd-seconds">--</div><div class="countdown-label">วินาที</div></div>
       </div>
     </section>
+
+
+    <section class="card rules-card" id="scoreRules">
+      <h3 class="rules-title">🏆 วิธีคิดคะแนน</h3>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="rule-icon">✅</div><div class="rule-label">ทายผลทีมชนะถูก</div><div class="rule-score">1,000 คะแนน</div></div>
+        <div class="rule-item"><div class="rule-icon">🔥</div><div class="rule-label">ทายทีมชนะ และทายสกอร์ถูก</div><div class="rule-score">3,000 คะแนน</div></div>
+        <div class="rule-item"><div class="rule-icon">⚽</div><div class="rule-label">ทายดาวซัลโวถูก</div><div class="rule-score">5,000 คะแนน</div></div>
+        <div class="rule-item"><div class="rule-icon">🥉</div><div class="rule-label">ทายอันดับ 3 ถูก</div><div class="rule-score">3,000 คะแนน</div></div>
+        <div class="rule-item"><div class="rule-icon">🥈</div><div class="rule-label">ทายรองแชมป์ถูก</div><div class="rule-score">7,000 คะแนน</div></div>
+        <div class="rule-item"><div class="rule-icon">🥇</div><div class="rule-label">ทายแชมป์โลกถูก</div><div class="rule-score">15,000 คะแนน</div></div>
+      </div>
+      <div class="transparency-note">
+        เพื่อความโปร่งใส Leaderboard จะแสดง Username และชื่อย่อบางส่วนเท่านั้น เพื่อป้องกันการเปิดเผยข้อมูลส่วนบุคคล และช่วยยืนยันว่าการจัดอันดับตรวจสอบได้
+      </div>
+    </section>
+
 
     <div id="loginSection" class="login-card">
       <h3 style="text-align:center;color:#58a6ff;margin-top:0;">👤 กรอกข้อมูลผู้เล่นเพื่อเริ่มทายผล</h3>
@@ -76,7 +93,7 @@
     </div>
   </main>
 
-  <script src="supabase-config.js?v=v9-ultimate-1"></script>
-  <script src="app.js?v=v9-ultimate-1"></script>
+  <script src="supabase-config.js?v=v9-final-2"></script>
+  <script src="app.js?v=v9-final-2"></script>
 </body>
 </html>
