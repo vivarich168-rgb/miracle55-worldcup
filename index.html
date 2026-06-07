@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Miracle55 - FIFA Worldcup 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="style.css?v=v9-final-2">
+  <link rel="stylesheet" href="style.css?v=v10-final-1">
 </head>
 <body>
   <main class="app-shell">
@@ -33,6 +33,13 @@
         <div class="countdown-box"><div class="countdown-num" id="cd-minutes">--</div><div class="countdown-label">นาที</div></div>
         <div class="countdown-box"><div class="countdown-num" id="cd-seconds">--</div><div class="countdown-label">วินาที</div></div>
       </div>
+    </section>
+
+    <section class="stats-grid" id="publicStats">
+      <div class="summary-card"><div class="summary-label">ผู้ร่วมแข่งขัน</div><div class="summary-value cyan" id="statPlayers">--</div></div>
+      <div class="summary-card"><div class="summary-label">รายการทายผล</div><div class="summary-value" id="statPredictions">--</div></div>
+      <div class="summary-card"><div class="summary-label">แมตช์จบแล้ว</div><div class="summary-value green" id="statFinished">--</div></div>
+      <div class="summary-card"><div class="summary-label">เงินรางวัลรวม</div><div class="summary-value orange" id="statPrize">100,000</div></div>
     </section>
 
 
@@ -93,7 +100,7 @@
     </div>
   </main>
 
-  <script src="supabase-config.js?v=v9-final-2"></script>
-  <script src="app.js?v=v9-final-2"></script>
+  <script src="supabase-config.js?v=v10-final-1"></script>
+  <script src="app.js?v=v10-final-1"></script>
 </body>
 </html>

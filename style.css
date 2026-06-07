@@ -422,3 +422,40 @@ button:hover{filter:brightness(1.12);transform:translateY(-1px)}
   .rules-grid { grid-template-columns: 1fr; }
   .rules-card { padding: 15px; }
 }
+
+
+/* V10 Final Complete */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(120px,1fr));
+  gap:12px;
+  max-width:980px;
+  margin:0 auto 18px;
+}
+.podium-wrap{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  align-items:end;
+  margin:14px 0 12px;
+}
+.podium-card{
+  text-align:center;
+  border:1px solid rgba(148,163,184,.2);
+  border-radius:18px;
+  padding:14px 10px;
+  background:rgba(15,23,42,.78);
+  box-shadow:0 10px 26px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.podium-1{transform:translateY(-10px);border-color:rgba(251,191,36,.5);box-shadow:0 0 32px rgba(251,191,36,.16)}
+.podium-2{border-color:rgba(203,213,225,.42)}
+.podium-3{border-color:rgba(205,127,50,.42)}
+.podium-medal{font-size:34px;animation:softPulse 2.8s ease-in-out infinite}
+.podium-rank{font-size:12px;color:var(--muted);font-weight:900}
+.podium-user{font-size:16px;font-weight:950;color:#fff;margin-top:4px;word-break:break-word}
+.podium-name{font-size:12px;color:#cbd5e1;margin-top:3px}
+.podium-score{font-size:13px;color:#67e8f9;font-weight:950;margin-top:8px}
+.hall-card{margin-top:12px;padding:13px;border-radius:14px;background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.22)}
+.hall-title{font-weight:950;color:#fef3c7;margin-bottom:5px}
+.hall-body{color:#e2e8f0;font-size:13px;line-height:1.5}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.podium-wrap{grid-template-columns:1fr}.podium-1{transform:none;order:-1}}

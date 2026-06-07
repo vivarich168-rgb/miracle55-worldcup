@@ -1,26 +1,27 @@
-Miracle55 Worldcup V9.2 Final Edition
+Miracle55 Worldcup V10 Final Complete
 
-เพิ่มจาก V9.1:
-- เพิ่ม Card วิธีคิดคะแนนในหน้าเว็บสมาชิกและหน้า Admin
-- แสดงกติกาคะแนนครบ:
-  1) ทายทีมชนะถูก = 1,000 คะแนน
-  2) ทายทีมชนะ + สกอร์ถูก = 3,000 คะแนน
-  3) ทายดาวซัลโวถูก = 5,000 คะแนน
-  4) ทายอันดับ 3 ถูก = 3,000 คะแนน
-  5) ทายรองแชมป์ถูก = 7,000 คะแนน
-  6) ทายแชมป์โลกถูก = 15,000 คะแนน
-- Leaderboard Privacy Plus: username + ชื่อย่อ 3-4 ตัวอักษร
+สิ่งที่แก้และเพิ่ม:
+- แก้ JavaScript Syntax Error ใน app.js แล้ว
+- Login / Leaderboard / Submit กลับมาทำงานได้
+- Leaderboard Privacy: username + ชื่อย่อ 3-4 ตัวอักษร
 - Top 20 + สีอันดับ 1-10 + Prize Zone
-- Mobile/Desktop Responsive + Animation เบา ๆ
+- เพิ่ม Podium Top 3
+- เพิ่ม Statistics Card หน้าแรก
+- เพิ่ม Hall of Fame Preview
+- Card วิธีคิดคะแนนครบ 6 ข้อ
+- Responsive มือถือ + Desktop
+- Animation เบา ๆ
 
 วิธีใช้:
 1) แตก ZIP
 2) อัปโหลดไฟล์ทั้งหมดไป root repo GitHub ทับของเดิม
 3) Supabase > SQL Editor > รัน 00_RUN_THIS_SQL_FIRST.sql
 4) เปิดหน้าเว็บ:
-https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v9-final-2
+https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v10-final-1
 
 หน้าแอดมิน:
-https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v9-final-2
+https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v10-final-1
 
 รหัสแอดมิน: 556677
+
+ถ้าเว็บยังเป็นหน้าเก่า ให้กด Ctrl+F5 หรือเปลี่ยนท้าย URL เป็น ?v=v10-final-2

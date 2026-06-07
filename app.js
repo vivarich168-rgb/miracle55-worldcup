@@ -45,12 +45,12 @@ function checkDeadline(){ return new Date() <= new Date(PREDICTION_DEADLINE); }
 
 function maskName(name){
     if (!name) return '';
-    const firstName = String(name).trim().split(' ')[0];
+    const firstName = String(name).trim().split(/\s+/)[0];
+    if (!firstName) return '';
     if (firstName.length <= 4) return firstName + '**';
     return firstName.substring(0, 4) + '****';
 }
-****`;
-}
+
 
 function startCountdown(){
     if(!$('cd-days')) return;
@@ -255,6 +255,36 @@ function medalForRank(rank){
     return '';
 }
 
+
+function renderPodium(data){
+    const top = (data || []).slice(0, 3);
+    if (!top.length) return '';
+    const card = (u, rank) => {
+        const medal = medalForRank(rank);
+        const masked = maskName(u.full_name);
+        return `<div class="podium-card podium-${rank}">
+            <div class="podium-medal">${medal}</div>
+            <div class="podium-rank">อันดับ ${rank}</div>
+            <div class="podium-user">${u.username || '-'}</div>
+            <div class="podium-name">${masked || 'ไม่แสดงชื่อ'}</div>
+            <div class="podium-score">${u.total_points || 0} คะแนน</div>
+        </div>`;
+    };
+    const first = top[0] ? card(top[0], 1) : '';
+    const second = top[1] ? card(top[1], 2) : '';
+    const third = top[2] ? card(top[2], 3) : '';
+    return `<div class="podium-wrap">${second}${first}${third}</div>`;
+}
+
+function renderHallOfFame(data){
+    const champ = (data || [])[0];
+    if (!champ) return '';
+    return `<div class="hall-card">
+        <div class="hall-title">🏆 Hall of Fame Preview</div>
+        <div class="hall-body">ผู้นำปัจจุบัน: <strong>${champ.username || '-'}</strong> <span>(${maskName(champ.full_name) || 'ไม่แสดงชื่อ'})</span> — ${champ.total_points || 0} คะแนน</div>
+    </div>`;
+}
+
 function renderLeaderboard(data,targetId){
     const rows = (data || []).slice(0,20).map((u,i)=>{
         const rank = i + 1;
@@ -270,12 +300,14 @@ function renderLeaderboard(data,targetId){
         </tr>`;
     }).join('');
     $(targetId).innerHTML = `
+      ${renderPodium(data)}
       <div class="table-wrap">
         <table class="table">
           <thead><tr><th>อันดับ</th><th>Username / ชื่อย่อ</th><th>คะแนน</th></tr></thead>
           <tbody>${rows || '<tr><td colspan="3">ยังไม่มีข้อมูลคะแนน</td></tr>'}</tbody>
         </table>
-      </div>`;
+      </div>
+      ${renderHallOfFame(data)}`;
 }
 
 async function loadLeaderboard(targetId='leaderboardContent', showCard=true){
@@ -301,7 +333,27 @@ async function loadAdminSummary(){
     $('sumWaiting').innerText = Math.max(0,total-finished);
 }
 
+
+async function loadPublicStats(){
+    if (!$('statPlayers')) return;
+    try {
+        const [{ count:players }, { count:predictions }, { data:matches }] = await Promise.all([
+            supabaseClient.from('users').select('*',{ count:'exact', head:true }),
+            supabaseClient.from('predictions').select('*',{ count:'exact', head:true }),
+            supabaseClient.from('matches').select('is_finished')
+        ]);
+        const finished = (matches || []).filter(m=>m.is_finished).length;
+        $('statPlayers').innerText = players ?? 0;
+        $('statPredictions').innerText = predictions ?? 0;
+        $('statFinished').innerText = finished;
+        $('statPrize').innerText = '100,000';
+    } catch (e) {
+        console.warn('loadPublicStats error', e);
+    }
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
     applyBranding();
     startCountdown();
+    loadPublicStats();
 });
