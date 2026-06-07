@@ -11,8 +11,16 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
 
+const PREDICTION_DEADLINE = '2026-06-28T23:59:59+07:00';
+
+
+// ===============================
+// BRAND CONFIG - แก้ชื่อเว็บตรงนี้จุดเดียว
+// ===============================
 const SITE_NAME = 'Miracle55';
 const EVENT_NAME = 'FIFA Worldcup 2026';
-const PREDICTION_DEADLINE = '2026-06-28T23:59:59+07:00';
+const SITE_TAGLINE = 'Prediction Challenge';
+const SITE_DOMAIN_HINT = 'worldcup.miracle55.com';
+// ===============================
 
 console.log('✅ Supabase config loaded:', supabaseUrl);
