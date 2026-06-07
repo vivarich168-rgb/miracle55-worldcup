@@ -1,6 +1,8 @@
 -- Miracle55 Worldcup: Tables + Columns + RLS Policies
--- รันไฟล์นี้ใน Supabase > SQL Editor ได้เลย
+-- ใช้ไฟล์นี้รันใน Supabase > SQL Editor ได้เลย
 -- รันซ้ำได้ ไม่ต้องลบ policy เอง
+
+create extension if not exists pgcrypto;
 
 create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),
@@ -40,7 +42,6 @@ create table if not exists public.predictions (
   unique(user_id, match_key)
 );
 
--- เผื่อเคยสร้างตารางเวอร์ชันเก่าไว้แล้ว ให้เติมคอลัมน์ที่ขาดโดยไม่พัง
 alter table public.users add column if not exists full_name text;
 alter table public.users add column if not exists total_points integer default 0;
 alter table public.users add column if not exists created_at timestamptz default now();
@@ -66,7 +67,6 @@ alter table public.predictions add column if not exists scored_at timestamptz;
 alter table public.predictions add column if not exists created_at timestamptz default now();
 alter table public.predictions add column if not exists updated_at timestamptz default now();
 
--- unique สำหรับกัน user คนเดิมส่งคู่เดิมซ้ำ
 create unique index if not exists predictions_user_match_key_unique
 on public.predictions (user_id, match_key);
 
@@ -74,14 +74,15 @@ alter table public.users enable row level security;
 alter table public.predictions enable row level security;
 alter table public.matches enable row level security;
 
--- ลบ policy ชื่อเดียวกันก่อน เพื่อรันซ้ำได้ ไม่เจอ already exists
+grant usage on schema public to anon;
+grant select, insert, update on public.users to anon;
+grant select, insert, update on public.predictions to anon;
+grant select, insert, update on public.matches to anon;
+
 drop policy if exists "miracle55_users_anon_all" on public.users;
 drop policy if exists "miracle55_predictions_anon_all" on public.predictions;
 drop policy if exists "miracle55_matches_anon_all" on public.matches;
 
--- Policy สำหรับทดสอบบน GitHub Pages
--- หมายเหตุ: เวอร์ชันนี้เปิดสิทธิ์กว้างเพื่อให้ทดสอบง่าย
--- ถ้าใช้จริงกับเงินรางวัล ควรทำ Supabase Auth + แยกสิทธิ์ admin/user เพิ่ม
 create policy "miracle55_users_anon_all"
 on public.users
 for all
@@ -102,3 +103,5 @@ for all
 to anon
 using (true)
 with check (true);
+
+notify pgrst, 'reload schema';

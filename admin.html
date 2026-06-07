@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Miracle55 Worldcup</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=20260607-4">
+    <link rel="stylesheet" href="style.css?v=admin-fix-1">
 </head>
 <body>
     <div class="header-zone">
@@ -17,7 +17,7 @@
         <h3 style="color:#58a6ff; margin-top:0;">เข้าสู่หน้าแอดมิน</h3>
         <input type="password" id="adminPin" placeholder="ใส่รหัสแอดมิน">
         <button onclick="unlockAdmin()" style="width:100%;">เข้าสู่ระบบแอดมิน</button>
-        <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น ความปลอดภัยจริงควรใช้ Supabase Auth + RLS Policy</p>
+        <p class="warning">* รหัสนี้เป็นแค่กันคนทั่วไปแบบเบื้องต้น ความปลอดภัยจริงควรใช้ Supabase Auth + Edge Function ภายหลัง</p>
     </div>
 
     <div id="adminPanel" class="admin-card" style="display:none;">
@@ -31,11 +31,15 @@
         <div id="adminResult"></div>
     </div>
 
-    <script src="supabase-config.js?v=20260607-4"></script>
-    <script src="calculate.js?v=20260607-4"></script>
+    <script src="supabase-config.js?v=admin-fix-1"></script>
+    <script src="calculate.js?v=admin-fix-1"></script>
     <script>
-        // เปลี่ยนรหัสนี้เองก่อนใช้งานจริง
         const ADMIN_PIN = '556677';
+
+        function showAdminMessage(msg, isError = false) {
+            const el = document.getElementById('adminResult');
+            el.innerHTML = `<p class="${isError ? 'warning' : 'status-ok'}" style="display:block; text-align:left;">${msg}</p>`;
+        }
 
         function unlockAdmin() {
             if (document.getElementById('adminPin').value !== ADMIN_PIN) {
@@ -44,6 +48,7 @@
             }
             document.getElementById('adminLogin').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
+            loadRecentMatches();
         }
 
         async function updateScore() {
@@ -62,8 +67,7 @@
                 actual_score_a: parseInt(scoreA, 10),
                 actual_score_b: parseInt(scoreB, 10),
                 actual_winner: actualWinner,
-                is_finished: true,
-                updated_at: new Date().toISOString()
+                is_finished: true
             };
 
             const { error } = await supabaseClient
@@ -71,26 +75,37 @@
                 .upsert([payload], { onConflict: 'match_key' });
 
             if (error) {
-                alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message);
+                console.error('Supabase admin upsert error:', error);
+                alert('บันทึกผลจริงไม่สำเร็จ: ' + error.message + '\n\nให้รัน SQL_SETUP_POLICY.sql เวอร์ชันล่าสุดใน Supabase ก่อน แล้วลองใหม่');
                 return;
             }
 
             await calculateAndSaveScores(matchKey);
-            loadRecentMatches();
+            await loadRecentMatches();
         }
 
         async function loadRecentMatches() {
             const { data, error } = await supabaseClient
                 .from('matches')
-                .select('match_key, actual_score_a, actual_score_b, actual_winner, is_finished, updated_at')
-                .order('updated_at', { ascending: false })
-                .limit(20);
+                .select('match_key, actual_score_a, actual_score_b, actual_winner, is_finished')
+                .order('match_key', { ascending: true })
+                .limit(50);
 
-            if (error) return alert('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
+            if (error) {
+                console.error('Load matches error:', error);
+                showAdminMessage('โหลดข้อมูลไม่สำเร็จ: ' + error.message, true);
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                showAdminMessage('ยังไม่มีผลจริงที่บันทึกไว้');
+                return;
+            }
+
             document.getElementById('adminResult').innerHTML = `
                 <table class="table">
                     <thead><tr><th>Match</th><th>ผลจริง</th><th>ผู้ชนะ</th><th>สถานะ</th></tr></thead>
-                    <tbody>${data.map(m => `<tr><td>${m.match_key}</td><td>${m.actual_score_a}-${m.actual_score_b}</td><td>${m.actual_winner || '-'}</td><td>${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</td></tr>`).join('')}</tbody>
+                    <tbody>${data.map(m => `<tr><td>${m.match_key}</td><td>${m.actual_score_a ?? '-'}-${m.actual_score_b ?? '-'}</td><td>${m.actual_winner || '-'}</td><td>${m.is_finished ? 'จบแล้ว' : 'ยังไม่จบ'}</td></tr>`).join('')}</tbody>
                 </table>`;
         }
     </script>
