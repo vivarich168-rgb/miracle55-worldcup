@@ -1,28 +1,23 @@
-Kongo Group Worldcup V10.2
+Miracle55 Worldcup V10.1 Branding Edition
 
-เวอร์ชันนี้ทำเพื่อใช้เป็นต้นแบบสำหรับทำเว็บแบบเดียวกันหลายเว็บ
+สิ่งที่แก้ในเวอร์ชันนี้:
+- เปลี่ยน Branding ให้ใช้ชื่อเว็บ Miracle55
+- เพิ่ม Title / Meta / Open Graph เป็น Miracle55
+- Footer แสดง © 2026 Miracle55
+- หน้า Admin ใช้ชื่อ Miracle55 Admin Center
+- ตั้งตัวแปร SITE_NAME และ EVENT_NAME ใน supabase-config.js เพื่อแก้ชื่อเว็บในอนาคตได้ง่าย
+- ลบ/แทนที่คำว่า vivarich168-rgb จากไฟล์เว็บทั้งหมด
 
-ไฟล์สำคัญ:
-- supabase-config.js : แก้ชื่อเว็บ / event / domain hint
-- CNAME.example : ตัวอย่างไฟล์ CNAME สำหรับ Custom Domain
-- BRANDING_AND_DOMAIN_GUIDE.md : คู่มือเปลี่ยนชื่อเว็บและตั้ง Custom Domain
-- 00_RUN_THIS_SQL_FIRST.sql : SQL สำหรับ Supabase
-
-วิธีใช้งาน:
+วิธีใช้:
 1) แตก ZIP
-2) แก้ชื่อเว็บใน supabase-config.js
-3) อัปโหลดไฟล์ทั้งหมดไป GitHub repo
-4) รัน 00_RUN_THIS_SQL_FIRST.sql ใน Supabase
-5) ตั้ง Custom Domain ถ้าไม่อยากให้ URL โชว์ชื่อ GitHub
-6) เปิดทดสอบด้วย ?v=v10.2-kongo
+2) อัปโหลดไฟล์ทั้งหมดไปที่ root ของ GitHub repo ทับของเดิม
+3) ถ้ายังไม่ได้รัน SQL ล่าสุด ให้รัน 00_RUN_THIS_SQL_FIRST.sql ใน Supabase
+4) เปิดหน้าเว็บ:
+https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v10.1-branding
 
-ตัวอย่าง:
-https://worldcup.kongo-group.com/?v=v10.2-kongo
-https://worldcup.kongo-group.com/admin.html?v=v10.2-kongo
+หน้า Admin:
+https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v10.1-branding
 
-
-Kongo Group Rename Note
-- เปลี่ยนชื่อจาก Miracle55 เป็น Kongo Group แล้ว
-- Cache version: v10.2-kongo
-- SQL policy prefix ใช้ kongo_group เพื่อป้องกัน error จากเครื่องหมายขีดกลาง
-- หากรัน SQL แล้วเจอ policy error ให้ใช้ไฟล์ SQL_POLICY_FIX_KONGO_GROUP.sql
+หมายเหตุ:
+URL ของ GitHub Pages ยังจะมีชื่อบัญชี GitHub อยู่ตามระบบของ GitHub
+ถ้าต้องการซ่อนชื่อบัญชีเต็มรูปแบบ ให้เชื่อม Custom Domain เช่น worldcup.miracle55.com
