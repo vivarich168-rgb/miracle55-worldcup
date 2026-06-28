@@ -71,7 +71,7 @@ function startCountdown(){
 }
 
 function applyBranding(){
-    if($('siteNameText')) $('siteNameText').innerText = typeof SITE_NAME !== 'undefined' ? SITE_NAME : 'Miracle55';
+    if($('siteNameText')) $('siteNameText').innerText = typeof SITE_NAME !== 'undefined' ? SITE_NAME : 'Kongo Group';
     if($('eventNameText')) $('eventNameText').innerText = typeof EVENT_NAME !== 'undefined' ? EVENT_NAME : 'FIFA WORLD CUP 2026';
 }
 
@@ -100,8 +100,44 @@ function createMatchBlock(match){
         </div>`;
 }
 
-function initLayout(){
+async function loadInitialMatchesFromSupabase(){
+    try {
+        const { data, error } = await supabaseClient
+            .from('matches')
+            .select('id, match_key, team_a, team_b')
+            .order('id', { ascending: true });
+
+        if (error) {
+            console.warn('โหลดทีมจาก Supabase ไม่สำเร็จ ใช้ทีมสำรองในไฟล์แทน:', error);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            console.warn('ไม่พบข้อมูล matches ใน Supabase ใช้ทีมสำรองในไฟล์แทน');
+            return;
+        }
+
+        data.forEach(row => {
+            const key = row.match_key || `m-${row.id}`;
+            const match = initialMatches.left.find(m => m.key === key || m.id === row.id)
+                       || initialMatches.right.find(m => m.key === key || m.id === row.id);
+
+            if (match) {
+                if (row.team_a) match.t1 = row.team_a;
+                if (row.team_b) match.t2 = row.team_b;
+            }
+        });
+
+        console.log('✅ โหลดรายชื่อทีมจาก Supabase matches สำเร็จ:', data.length, 'รายการ');
+    } catch (err) {
+        console.warn('โหลดทีมจาก Supabase ไม่สำเร็จ ใช้ทีมสำรองในไฟล์แทน:', err);
+    }
+}
+
+async function initLayout(){
     if(layoutBuilt) return;
+    await loadInitialMatchesFromSupabase();
+
     $('col-r32-left').innerHTML = initialMatches.left.map(createMatchBlock).join('');
     $('col-r32-right').innerHTML = initialMatches.right.map(createMatchBlock).join('');
     $('col-r16-left').innerHTML = dynamicMatches.filter(m=>m.key.startsWith('left-r16')).map(createMatchBlock).join('');
@@ -114,6 +150,8 @@ function initLayout(){
     $('col-r16-right').innerHTML = dynamicMatches.filter(m=>m.key.startsWith('right-r16')).map(createMatchBlock).join('');
     layoutBuilt = true;
 }
+
+
 
 function updateTieSelect(matchKey,t1,t2,s1,s2){
     const box = $(`tie-${matchKey}`);
@@ -181,7 +219,7 @@ function calculateFlow(){
     getWinnerLoser('third');
 }
 
-async function checkAndLoginUser(){
+async async function checkAndLoginUser(){
     const username = $('username').value.trim();
     const fullName = $('fullName').value.trim();
     if(!username) return alert('กรุณากรอก Username ครับ');
@@ -198,7 +236,7 @@ async function checkAndLoginUser(){
     }
 
     currentUser = user;
-    initLayout();
+    await initLayout();
     $('loginSection').style.display = 'none';
     $('loginStatus').style.display = 'block';
     $('loginStatus').innerText = `👋 ผู้เล่น: ${user.username} เริ่มทายสกอร์ได้เลย!`;
