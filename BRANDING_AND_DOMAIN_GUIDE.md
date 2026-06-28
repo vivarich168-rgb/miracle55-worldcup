@@ -10,7 +10,7 @@
 const SITE_NAME = 'Kongo Group';
 const EVENT_NAME = 'FIFA Worldcup 2026';
 const SITE_TAGLINE = 'Prediction Challenge';
-const SITE_DOMAIN_HINT = 'worldcup.kongo-group.com';
+const SITE_DOMAIN_HINT = '';
 ```
 
 ตัวอย่างเว็บใหม่:
@@ -33,7 +33,7 @@ https://vivarich168-rgb.github.io/mirade55-worldcup/
 ถ้าต้องการไม่ให้โชว์ชื่อบัญชี ต้องใช้ Custom Domain เช่น:
 
 ```text
-https://worldcup.kongo-group.com
+https://
 ```
 
 ## วิธีตั้ง Custom Domain บน GitHub Pages
@@ -43,7 +43,7 @@ https://worldcup.kongo-group.com
 3. ไปที่ Settings > Pages
 4. ช่อง Custom domain ใส่:
    ```text
-   worldcup.kongo-group.com
+   
    ```
 5. กด Save
 6. ไปที่ DNS ของผู้ให้บริการโดเมน
@@ -75,7 +75,7 @@ vivarich168-rgb.github.io
 
 ## สำหรับ 10 เว็บ แนะนำโครงสร้างแบบนี้
 
-- เว็บ 1: `worldcup.kongo-group.com`
+- เว็บ 1: ``
 - เว็บ 2: `worldcup.luckyball99.com`
 - เว็บ 3: `worldcup.goalwin88.com`
 
@@ -107,8 +107,8 @@ vivarich168-rgb.github.io
 ## ลิงก์ทดสอบหลัง Deploy
 
 ```text
-https://<your-domain>/?v=v10.3-supabase-matches
-https://<your-domain>/admin.html?v=v10.3-supabase-matches
+https://<your-domain>/?v=v10.4-live-matches
+https://<your-domain>/admin.html?v=v10.4-live-matches
 ```
 
 รหัส Admin เริ่มต้น: `556677`

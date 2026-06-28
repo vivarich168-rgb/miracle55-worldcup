@@ -1,6 +1,6 @@
 -- FIX_MATCH_KEYS_FOR_KONGO_GROUP.sql
--- รันไฟล์นี้ถ้าหน้าเว็บยังไม่โหลดทีมจาก matches
--- ใช้สำหรับเติม match_key ให้ครบ m-1 ถึง m-16
+-- รันไฟล์นี้ใน Supabase ถ้าหน้าเว็บยังไม่ดึงทีมจากตาราง matches
+-- ต้องให้ id 1-16 มี match_key เป็น m-1 ถึง m-16
 
 update public.matches
 set match_key = 'm-' || id::text

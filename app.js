@@ -219,7 +219,7 @@ function calculateFlow(){
     getWinnerLoser('third');
 }
 
-async async function checkAndLoginUser(){
+async function checkAndLoginUser(){
     const username = $('username').value.trim();
     const fullName = $('fullName').value.trim();
     if(!username) return alert('กรุณากรอก Username ครับ');
