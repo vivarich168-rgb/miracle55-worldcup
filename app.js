@@ -71,9 +71,40 @@ function startCountdown(){
 }
 
 function applyBranding(){
-    if($('siteNameText')) $('siteNameText').innerText = typeof SITE_NAME !== 'undefined' ? SITE_NAME : 'Kongo Group';
-    if($('eventNameText')) $('eventNameText').innerText = typeof EVENT_NAME !== 'undefined' ? EVENT_NAME : 'FIFA WORLD CUP 2026';
+    const cfg = (typeof CONFIG !== 'undefined') ? CONFIG : {};
+    const siteName = cfg.siteName || 'Prediction Platform';
+    const eventName = cfg.eventName || 'FIFA Worldcup 2026';
+    const tagline = cfg.tagline || 'Prediction Challenge';
+    const titles = cfg.titles || {};
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value) el.innerText = value;
+    };
+
+    setText('siteNameText', siteName);
+    setText('eventNameText', eventName);
+    setText('taglineText', tagline);
+    setText('heroKickerText', titles.heroKicker || ('⚽ ' + tagline));
+    setText('loginTitleText', titles.loginTitle || '👤 กรอกข้อมูลผู้เล่นเพื่อเริ่มทายผล');
+    setText('footerText', titles.footerText || ('© 2026 ' + siteName + ' • All Rights Reserved'));
+
+    document.querySelectorAll('[data-brand-title="leaderboard"]').forEach(el => {
+        el.innerText = titles.leaderboardTitle || ('🏆 ' + siteName + ' Leaderboard Top 20');
+    });
+    document.querySelectorAll('[data-brand-title="admin"]').forEach(el => {
+        el.innerText = titles.adminTitle || (siteName + ' Admin Center');
+    });
+
+    document.title = titles.browserTitle || (siteName + ' | ' + eventName);
+
+    if (cfg.theme) {
+        document.documentElement.style.setProperty('--gold', cfg.theme.primary || '#fbbf24');
+        document.documentElement.style.setProperty('--blue', cfg.theme.secondary || '#38bdf8');
+        document.documentElement.style.setProperty('--green', cfg.theme.accent || '#22c55e');
+        document.documentElement.style.setProperty('--bg', cfg.theme.bg || '#050814');
+    }
 }
+
 
 function createMatchBlock(match){
     const isR32 = match.stage === 'R32';

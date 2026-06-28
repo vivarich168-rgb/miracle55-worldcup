@@ -1,21 +1,15 @@
-Kongo Group Worldcup V10.4 Live Matches Fixed
+Kongo Prediction Platform V12 Enterprise Brand Engine
 
-แก้ไขสำคัญ:
-- หน้าเว็บโหลดรายชื่อทีมจาก Supabase ตาราง matches อัตโนมัติ
-- แก้ปัญหา app.js syntax error จาก async async function
-- เปลี่ยน cache version เป็น v10.4-live-matches
-- เพิ่มไฟล์ FIX_MATCH_KEYS_FOR_KONGO_GROUP.sql สำหรับเติม match_key
+เวอร์ชันนี้ทำให้ชื่อเว็บล้อกับเว็บใหม่ผ่าน config.js
 
-วิธีใช้งาน:
-1) แตก ZIP
-2) อัปโหลดไฟล์ทั้งหมดทับของเดิมใน GitHub Repository root
-3) ถ้าใน Supabase match_key ยังว่าง ให้รัน FIX_MATCH_KEYS_FOR_KONGO_GROUP.sql
-4) เปิดหน้าเว็บ:
-https://vivarich168-rgb.github.io/mirade55-worldcup/?v=v10.4-live-matches
+ไฟล์สำคัญ:
+- config.js = ศูนย์กลางแบรนด์ / ธีม / Supabase / Admin / Deadline
+- V12_BRAND_ENGINE_GUIDE.md = คู่มือ Brand Engine
+- V12_NEW_SITE_CONFIG_EXAMPLES.md = ตัวอย่าง config สำหรับ 8xhuay, sloyday88, legacybet88, 8xufa
+- 00_RUN_THIS_SQL_FIRST.sql = SQL Setup
+
+หลัง Deploy เปิดทดสอบ:
+https://vivarich168-rgb.github.io/<repo-name>/?v=v12-brand-engine
 
 หน้า Admin:
-https://vivarich168-rgb.github.io/mirade55-worldcup/admin.html?v=v10.4-live-matches
-
-หมายเหตุ:
-- ถ้าแก้ชื่อทีมใน Supabase แล้วเว็บยังไม่เปลี่ยน ให้กด Ctrl+Shift+R หรือเปลี่ยนท้าย URL version
-- ตาราง matches ควรมี id 1-16 และ match_key m-1 ถึง m-16
+https://vivarich168-rgb.github.io/<repo-name>/admin.html?v=v12-brand-engine

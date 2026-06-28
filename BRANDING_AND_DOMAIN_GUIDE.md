@@ -107,8 +107,8 @@ vivarich168-rgb.github.io
 ## ลิงก์ทดสอบหลัง Deploy
 
 ```text
-https://<your-domain>/?v=v10.4-live-matches
-https://<your-domain>/admin.html?v=v10.4-live-matches
+https://<your-domain>/?v=v12-brand-engine
+https://<your-domain>/admin.html?v=v12-brand-engine
 ```
 
 รหัส Admin เริ่มต้น: `556677`
