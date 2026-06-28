@@ -39,7 +39,7 @@ const CONFIG = {
 
   adminPin: '556677',
   predictionDeadline: '2026-06-28T23:59:59+07:00',
-  version: 'v12-brand-engine'
+  version: 'v12.1-config-loader-fix'
 };
 
 const SITE_NAME = CONFIG.siteName;

@@ -1,15 +1,16 @@
-Kongo Prediction Platform V12 Enterprise Brand Engine
+Kongo Prediction Platform V12.1 Config Loader Fix
 
-เวอร์ชันนี้ทำให้ชื่อเว็บล้อกับเว็บใหม่ผ่าน config.js
+แก้ไขสำคัญ:
+- บังคับให้ index.html และ admin.html โหลดไฟล์ตามลำดับ:
+  1) config.js
+  2) supabase-config.js
+  3) app.js
+- แก้ปัญหา CONFIG ไม่ถูกโหลด ทำให้กดเข้าระบบ/ทายผลไม่ได้
 
-ไฟล์สำคัญ:
-- config.js = ศูนย์กลางแบรนด์ / ธีม / Supabase / Admin / Deadline
-- V12_BRAND_ENGINE_GUIDE.md = คู่มือ Brand Engine
-- V12_NEW_SITE_CONFIG_EXAMPLES.md = ตัวอย่าง config สำหรับ 8xhuay, sloyday88, legacybet88, 8xufa
-- 00_RUN_THIS_SQL_FIRST.sql = SQL Setup
+หลังอัปโหลด GitHub ให้เปิด:
 
-หลัง Deploy เปิดทดสอบ:
-https://vivarich168-rgb.github.io/<repo-name>/?v=v12-brand-engine
+หน้าเว็บ:
+https://vivarich168-rgb.github.io/<repo-name>/?v=v12.1-config-loader-fix
 
 หน้า Admin:
-https://vivarich168-rgb.github.io/<repo-name>/admin.html?v=v12-brand-engine
+https://vivarich168-rgb.github.io/<repo-name>/admin.html?v=v12.1-config-loader-fix

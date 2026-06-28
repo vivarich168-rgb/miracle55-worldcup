@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prediction Platform</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="style.css?v=v12-brand-engine">
+  <link rel="stylesheet" href="style.css?v=v12.1-config-loader-fix">
 
     <meta name="application-name" content="Prediction Platform Admin">
     <meta name="apple-mobile-web-app-title" content="Prediction Platform Admin">
@@ -78,10 +78,7 @@
     <footer class="site-footer" id="footerText">© 2026 Prediction Platform • All Rights Reserved</footer>
 
   </main>
-
-  <script src="supabase-config.js?v=v12-brand-engine"></script>
-  <script src="app.js?v=v12-brand-engine"></script>
-  <script src="calculate.js?v=v12-brand-engine"></script>
+  <script src="calculate.js?v=v12.1-config-loader-fix"></script>
   <script>
     const ADMIN_PIN = CONFIG.adminPin || '556677';
 
@@ -189,5 +186,9 @@
         </div>`;
     }
   </script>
+
+  <script src="config.js?v=v12.1-config-loader-fix"></script>
+  <script src="supabase-config.js?v=v12.1-config-loader-fix"></script>
+  <script src="app.js?v=v12.1-config-loader-fix"></script>
 </body>
 </html>
